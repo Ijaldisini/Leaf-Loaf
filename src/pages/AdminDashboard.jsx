@@ -250,7 +250,7 @@ export default function AdminDashboard() {
                 <td className="p-3 border">
                   {order.payment_method === "COD" ? (
                     <span className="text-green-600 font-bold text-sm">
-                      ✅ COD
+                      COD
                     </span>
                   ) : (
                     <div className="flex gap-2">
