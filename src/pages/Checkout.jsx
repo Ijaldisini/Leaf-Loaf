@@ -1,5 +1,6 @@
 import { supabase } from "../config/supabaseClient";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 import {
   MapContainer,
@@ -39,6 +40,7 @@ const RecenterMap = ({ lat, lng }) => {
 };
 
 export default function Checkout() {
+  const navigate = useNavigate();
   const [menus, setMenus] = useState([]);
   const [cart, setCart] = useState({});
   const [totalPrice, setTotalPrice] = useState(0);
@@ -188,8 +190,14 @@ export default function Checkout() {
         .insert(orderItems);
       if (itemsError) throw itemsError;
 
-      alert(`Pesanan Berhasil Disimpan! Nomor PO: ${poNumber}`);
-      window.location.reload();
+      navigate("/success", {
+        state: {
+          poNumber: poNumber,
+          customerName: formData.name,
+          paymentMethod: formData.paymentMethod,
+          totalPrice: totalPrice,
+        },
+      });
     } catch (error) {
       console.error(error);
       alert(error.message);
