@@ -1,6 +1,6 @@
 import { supabase } from "../config/supabaseClient";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 import {
   MapContainer,
@@ -206,46 +206,169 @@ export default function Checkout() {
     }
   };
 
-  return (
-    <div className="min-h-screen bg-gray-50 py-10 text-gray-900">
-      <div className="max-w-3xl mx-auto p-6 bg-white shadow-xl rounded-xl">
-        <h1 className="text-3xl font-bold mb-8 text-center text-green-700">
-          Form Pemesanan Leaf & Loaf
-        </h1>
+  const totalItems = Object.values(cart).reduce((sum, item) => sum + item.qty, 0);
 
-        <form onSubmit={handleSubmit} className="space-y-8">
-          <div className="p-5 border border-gray-200 rounded-lg bg-gray-50">
-            <h2 className="text-xl font-bold mb-4">
-              1. Pilih Menu <span className="text-red-500">*</span>
-            </h2>
-            <div className="space-y-3">
+  return (
+    <div style={{ minHeight: '100vh', fontFamily: 'var(--font-body)' }}>
+
+      {/* Navbar */}
+      <nav style={{
+        position: 'sticky',
+        top: 0,
+        zIndex: 50,
+        background: 'rgba(7, 26, 15, 0.75)',
+        backdropFilter: 'blur(24px) saturate(1.5)',
+        WebkitBackdropFilter: 'blur(24px) saturate(1.5)',
+        borderBottom: '1px solid var(--border-glass)',
+        padding: '0 24px',
+      }}>
+        <div style={{
+          maxWidth: '800px',
+          margin: '0 auto',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          height: '70px',
+        }}>
+          <Link to="/" style={{
+            fontFamily: 'var(--font-heading)',
+            fontSize: '20px',
+            fontWeight: 800,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            textDecoration: 'none',
+          }}>
+            <span style={{ fontSize: '24px' }}>🍃</span>
+            <span className="text-gradient">Leaf & Loaf</span>
+          </Link>
+          {totalItems > 0 && (
+            <div className="badge badge-green" style={{ fontSize: '13px', padding: '6px 16px' }}>
+              🛒 {totalItems} item · Rp {totalPrice.toLocaleString("id-ID")}
+            </div>
+          )}
+        </div>
+      </nav>
+
+      <div style={{ maxWidth: '800px', margin: '0 auto', padding: '40px 24px 80px' }}>
+
+        {/* Page Header */}
+        <div className="animate-in" style={{ textAlign: 'center', marginBottom: '40px' }}>
+          <h1 style={{
+            fontFamily: 'var(--font-heading)',
+            fontSize: 'clamp(28px, 4vw, 38px)',
+            fontWeight: 800,
+            marginBottom: '8px',
+          }}>
+            <span className="text-gradient">Form Pemesanan</span>
+          </h1>
+          <p style={{ color: 'var(--text-muted)', fontSize: '15px' }}>
+            Pilih menu favoritmu, isi data, dan pesan!
+          </p>
+        </div>
+
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+
+          {/* ===== STEP 1: MENU ===== */}
+          <div className="glass-card animate-in" style={{ padding: '32px', animationDelay: '0.1s' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '24px' }}>
+              <div className="step-number">1</div>
+              <h2 style={{
+                fontFamily: 'var(--font-heading)',
+                fontSize: '20px',
+                fontWeight: 700,
+              }}>
+                Pilih Menu <span style={{ color: 'var(--tomato)' }}>*</span>
+              </h2>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               {menus.map((menu) => (
                 <div
                   key={menu.id}
-                  className="flex justify-between items-center bg-white p-3 border rounded shadow-sm"
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    padding: '16px 20px',
+                    background: cart[menu.id] ? 'rgba(34, 197, 94, 0.08)' : 'rgba(7, 26, 15, 0.4)',
+                    borderRadius: '16px',
+                    border: `1.5px solid ${cart[menu.id] ? 'rgba(34, 197, 94, 0.3)' : 'var(--border-glass)'}`,
+                    transition: 'all 0.3s var(--ease-smooth)',
+                  }}
                 >
                   <div>
-                    <h3 className="font-bold">{menu.name}</h3>
-                    <p className="text-sm text-gray-500">{menu.description}</p>
-                    <p className="font-bold text-green-600">
-                      Rp {menu.price.toLocaleString("id-ID")}
+                    <h3 style={{
+                      fontFamily: 'var(--font-heading)',
+                      fontSize: '16px',
+                      fontWeight: 700,
+                      color: 'var(--text-primary)',
+                      marginBottom: '4px',
+                    }}>
+                      {menu.name}
+                    </h3>
+                    <p style={{ color: 'var(--text-muted)', fontSize: '13px', marginBottom: '4px' }}>
+                      {menu.description}
                     </p>
+                    <span style={{
+                      fontFamily: 'var(--font-heading)',
+                      fontWeight: 700,
+                      fontSize: '16px',
+                    }}>
+                      <span className="text-gradient">Rp {menu.price.toLocaleString("id-ID")}</span>
+                    </span>
                   </div>
-                  <div className="flex items-center gap-3">
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
                     <button
                       type="button"
                       onClick={() => updateCart(menu, -1)}
-                      className="w-8 h-8 bg-red-100 text-red-600 rounded-full font-bold hover:bg-red-200"
+                      style={{
+                        width: '36px',
+                        height: '36px',
+                        borderRadius: '12px',
+                        border: 'none',
+                        background: 'rgba(239, 68, 68, 0.15)',
+                        color: '#f87171',
+                        fontSize: '18px',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        transition: 'all 0.2s',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
                     >
-                      -
+                      −
                     </button>
-                    <span className="font-bold w-6 text-center">
+                    <span style={{
+                      fontFamily: 'var(--font-heading)',
+                      fontWeight: 800,
+                      fontSize: '18px',
+                      color: 'var(--text-primary)',
+                      width: '28px',
+                      textAlign: 'center',
+                    }}>
                       {cart[menu.id]?.qty || 0}
                     </span>
                     <button
                       type="button"
                       onClick={() => updateCart(menu, 1)}
-                      className="w-8 h-8 bg-green-100 text-green-600 rounded-full font-bold hover:bg-green-200"
+                      style={{
+                        width: '36px',
+                        height: '36px',
+                        borderRadius: '12px',
+                        border: 'none',
+                        background: 'rgba(34, 197, 94, 0.15)',
+                        color: 'var(--leaf-400)',
+                        fontSize: '18px',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        transition: 'all 0.2s',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
                     >
                       +
                     </button>
@@ -253,99 +376,208 @@ export default function Checkout() {
                 </div>
               ))}
             </div>
-            <div className="mt-4 text-right">
-              <h3 className="text-lg font-bold">
-                Total:{" "}
-                <span className="text-green-600">
-                  Rp {totalPrice.toLocaleString("id-ID")}
-                </span>
-              </h3>
+
+            {/* Total */}
+            <div className="divider" style={{ margin: '20px 0' }} />
+            <div style={{
+              display: 'flex',
+              justifyContent: 'flex-end',
+              alignItems: 'center',
+              gap: '12px',
+            }}>
+              <span style={{ color: 'var(--text-muted)', fontSize: '15px' }}>Total:</span>
+              <span style={{
+                fontFamily: 'var(--font-heading)',
+                fontSize: '24px',
+                fontWeight: 800,
+              }}>
+                <span className="text-gradient">Rp {totalPrice.toLocaleString("id-ID")}</span>
+              </span>
             </div>
           </div>
 
-          <div className="space-y-4">
-            <h2 className="text-xl font-bold">2. Data Diri</h2>
-            <div>
-              <label className="block font-medium">Nama Lengkap *</label>
-              <input
-                type="text"
-                name="name"
-                required
-                onChange={handleChange}
-                className="w-full border p-2 rounded"
-              />
+          {/* ===== STEP 2: PERSONAL DATA ===== */}
+          <div className="glass-card animate-in" style={{ padding: '32px', animationDelay: '0.2s' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '24px' }}>
+              <div className="step-number">2</div>
+              <h2 style={{
+                fontFamily: 'var(--font-heading)',
+                fontSize: '20px',
+                fontWeight: 700,
+              }}>
+                Data Diri
+              </h2>
             </div>
-            <div>
-              <label className="block font-medium">Nomor WhatsApp *</label>
-              <input
-                type="number"
-                name="phone"
-                required
-                onChange={handleChange}
-                className="w-full border p-2 rounded"
-              />
-            </div>
-            <div>
-              <label className="block font-medium">
-                Catatan Pesanan (Opsional)
-              </label>
-              <textarea
-                name="notes"
-                placeholder="Contoh: Tanpa selada"
-                onChange={handleChange}
-                className="w-full border p-2 rounded"
-              ></textarea>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <div>
+                <label style={{
+                  display: 'block',
+                  fontSize: '13px',
+                  fontWeight: 700,
+                  color: 'var(--text-secondary)',
+                  marginBottom: '8px',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.5px',
+                }}>
+                  Nama Lengkap <span style={{ color: 'var(--tomato)' }}>*</span>
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  required
+                  onChange={handleChange}
+                  placeholder="Nama lengkap kamu"
+                  className="input-glass"
+                />
+              </div>
+              <div>
+                <label style={{
+                  display: 'block',
+                  fontSize: '13px',
+                  fontWeight: 700,
+                  color: 'var(--text-secondary)',
+                  marginBottom: '8px',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.5px',
+                }}>
+                  Nomor WhatsApp <span style={{ color: 'var(--tomato)' }}>*</span>
+                </label>
+                <input
+                  type="number"
+                  name="phone"
+                  required
+                  onChange={handleChange}
+                  placeholder="08xxxxxxxxxx"
+                  className="input-glass"
+                />
+              </div>
+              <div>
+                <label style={{
+                  display: 'block',
+                  fontSize: '13px',
+                  fontWeight: 700,
+                  color: 'var(--text-secondary)',
+                  marginBottom: '8px',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.5px',
+                }}>
+                  Catatan Pesanan <span style={{ color: 'var(--text-muted)', textTransform: 'none' }}>(Opsional)</span>
+                </label>
+                <textarea
+                  name="notes"
+                  placeholder="Contoh: Tanpa selada"
+                  onChange={handleChange}
+                  className="input-glass"
+                  rows="3"
+                  style={{ resize: 'vertical' }}
+                />
+              </div>
             </div>
           </div>
 
-          <div>
-            <h2 className="text-xl font-bold mb-2">3. Metode Penerimaan *</h2>
-            <div className="flex gap-4 mb-4">
-              <label className="flex items-center gap-2">
+          {/* ===== STEP 3: RECEIVE METHOD ===== */}
+          <div className="glass-card animate-in" style={{ padding: '32px', animationDelay: '0.3s' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '24px' }}>
+              <div className="step-number">3</div>
+              <h2 style={{
+                fontFamily: 'var(--font-heading)',
+                fontSize: '20px',
+                fontWeight: 700,
+              }}>
+                Metode Penerimaan <span style={{ color: 'var(--tomato)' }}>*</span>
+              </h2>
+            </div>
+
+            <div className="radio-pill-group" style={{ marginBottom: '20px' }}>
+              <label
+                className={`radio-pill ${formData.receiveMethod === "Pickup" ? "active" : ""}`}
+              >
                 <input
                   type="radio"
                   name="receiveMethod"
                   value="Pickup"
                   checked={formData.receiveMethod === "Pickup"}
                   onChange={handleChange}
-                />{" "}
-                Pickup
+                />
+                📦 Pickup
               </label>
-              <label className="flex items-center gap-2">
+              <label
+                className={`radio-pill ${formData.receiveMethod === "Delivery" ? "active" : ""}`}
+              >
                 <input
                   type="radio"
                   name="receiveMethod"
                   value="Delivery"
                   checked={formData.receiveMethod === "Delivery"}
                   onChange={handleChange}
-                />{" "}
-                Delivery
+                />
+                🚚 Delivery
               </label>
             </div>
 
             {formData.receiveMethod === "Delivery" && (
-              <div className="p-4 border border-green-300 bg-green-50 rounded-lg space-y-4">
+              <div style={{
+                padding: '24px',
+                background: 'rgba(34, 197, 94, 0.05)',
+                borderRadius: '16px',
+                border: '1px solid rgba(34, 197, 94, 0.15)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '20px',
+                animation: 'fadeInUp 0.4s var(--ease-smooth)',
+              }}>
                 <div>
-                  <label className="block font-medium">Alamat Detail *</label>
+                  <label style={{
+                    display: 'block',
+                    fontSize: '13px',
+                    fontWeight: 700,
+                    color: 'var(--text-secondary)',
+                    marginBottom: '8px',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.5px',
+                  }}>
+                    Alamat Detail <span style={{ color: 'var(--tomato)' }}>*</span>
+                  </label>
                   <textarea
                     name="addressDetail"
                     required
                     onChange={handleChange}
-                    className="w-full border p-2 rounded"
-                  ></textarea>
+                    placeholder="Nama kos/gang/jalan..."
+                    className="input-glass"
+                    rows="2"
+                    style={{ resize: 'vertical' }}
+                  />
                 </div>
                 <div>
-                  <label className="block font-medium mb-2">
-                    Tandai Lokasi di Peta *
+                  <label style={{
+                    display: 'block',
+                    fontSize: '13px',
+                    fontWeight: 700,
+                    color: 'var(--text-secondary)',
+                    marginBottom: '10px',
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.5px',
+                  }}>
+                    Tandai Lokasi di Peta <span style={{ color: 'var(--tomato)' }}>*</span>
                   </label>
                   <button
                     type="button"
                     onClick={handleGeolocation}
-                    className="mb-2 bg-blue-500 text-white px-3 py-1 rounded text-sm hover:bg-blue-600"
+                    className="btn-3d"
+                    style={{ padding: '8px 18px', fontSize: '13px', marginBottom: '12px', borderRadius: '12px' }}
                   >
                     📍 Gunakan Lokasi Saat Ini
                   </button>
-                  <div className="w-full h-64 rounded border border-gray-300 overflow-hidden relative z-0">
+                  <div style={{
+                    width: '100%',
+                    height: '260px',
+                    borderRadius: '16px',
+                    overflow: 'hidden',
+                    border: '1px solid var(--border-glass)',
+                    position: 'relative',
+                    zIndex: 0,
+                  }}>
                     <MapContainer
                       center={[-8.1724, 113.6995]}
                       zoom={15}
@@ -380,54 +612,97 @@ export default function Checkout() {
             )}
           </div>
 
-          <div>
-            <h2 className="text-xl font-bold mb-2">4. Metode Pembayaran *</h2>
-            <div className="flex gap-4 mb-4">
-              <label className="flex items-center gap-2">
+          {/* ===== STEP 4: PAYMENT ===== */}
+          <div className="glass-card animate-in" style={{ padding: '32px', animationDelay: '0.4s' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '24px' }}>
+              <div className="step-number">4</div>
+              <h2 style={{
+                fontFamily: 'var(--font-heading)',
+                fontSize: '20px',
+                fontWeight: 700,
+              }}>
+                Metode Pembayaran <span style={{ color: 'var(--tomato)' }}>*</span>
+              </h2>
+            </div>
+
+            <div className="radio-pill-group" style={{ marginBottom: '20px' }}>
+              <label
+                className={`radio-pill ${formData.paymentMethod === "COD" ? "active" : ""}`}
+              >
                 <input
                   type="radio"
                   name="paymentMethod"
                   value="COD"
                   checked={formData.paymentMethod === "COD"}
                   onChange={handleChange}
-                />{" "}
-                COD
+                />
+                💵 COD
               </label>
-              <label className="flex items-center gap-2">
+              <label
+                className={`radio-pill ${formData.paymentMethod === "QRIS" ? "active" : ""}`}
+              >
                 <input
                   type="radio"
                   name="paymentMethod"
                   value="QRIS"
                   checked={formData.paymentMethod === "QRIS"}
                   onChange={handleChange}
-                />{" "}
-                QRIS
+                />
+                📱 QRIS
               </label>
             </div>
+
             {formData.paymentMethod === "QRIS" && (
-              <div className="p-4 border border-blue-300 bg-blue-50 rounded-lg">
-                <label className="block font-medium">
-                  Upload Bukti Transfer (JPG/PNG) *
+              <div style={{
+                padding: '24px',
+                background: 'rgba(59, 130, 246, 0.05)',
+                borderRadius: '16px',
+                border: '1px solid rgba(59, 130, 246, 0.15)',
+                animation: 'fadeInUp 0.4s var(--ease-smooth)',
+              }}>
+                <label style={{
+                  display: 'block',
+                  fontSize: '13px',
+                  fontWeight: 700,
+                  color: '#60a5fa',
+                  marginBottom: '12px',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.5px',
+                }}>
+                  Upload Bukti Transfer (JPG/PNG) <span style={{ color: 'var(--tomato)' }}>*</span>
                 </label>
                 <input
                   type="file"
                   accept="image/jpeg, image/png"
                   required
                   onChange={(e) => setQrisFile(e.target.files[0])}
-                  className="mt-2"
+                  style={{
+                    color: 'var(--text-secondary)',
+                    fontSize: '14px',
+                  }}
                 />
               </div>
             )}
           </div>
 
+          {/* ===== SUBMIT ===== */}
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-green-600 text-white font-bold py-4 rounded-lg hover:bg-green-700 transition shadow-lg text-lg"
+            className="btn-3d animate-in"
+            style={{
+              width: '100%',
+              padding: '20px',
+              fontSize: '18px',
+              borderRadius: '20px',
+              animationDelay: '0.5s',
+              opacity: isLoading ? 0.6 : 1,
+              cursor: isLoading ? 'not-allowed' : 'pointer',
+            }}
           >
             {isLoading
-              ? "Memproses..."
-              : `Kirim Pesanan (Rp ${totalPrice.toLocaleString("id-ID")})`}
+              ? "⏳ Memproses..."
+              : `Kirim Pesanan (Rp ${totalPrice.toLocaleString("id-ID")}) 🚀`}
           </button>
         </form>
       </div>

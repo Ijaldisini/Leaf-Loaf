@@ -82,215 +82,433 @@ export default function AdminDashboard() {
     fetchData();
   };
 
+  /* ===== LOGIN SCREEN ===== */
   if (!session) {
     return (
-      <div className="flex justify-center items-center h-screen bg-gray-100 text-gray-900">
+      <div style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '24px',
+        fontFamily: 'var(--font-body)',
+        position: 'relative',
+        overflow: 'hidden',
+      }}>
+        {/* Floating decorations */}
+        <div className="leaf-deco" style={{ top: '15%', left: '10%', fontSize: '80px' }}>🌿</div>
+        <div className="leaf-deco" style={{ bottom: '20%', right: '10%', fontSize: '100px', animationDelay: '-4s' }}>🍃</div>
+
         <form
           onSubmit={handleLogin}
-          className="bg-white p-8 rounded-lg shadow-md w-96"
+          className="glass-card animate-in"
+          style={{
+            width: '100%',
+            maxWidth: '420px',
+            padding: '44px 36px',
+            position: 'relative',
+            overflow: 'hidden',
+          }}
         >
-          <h2 className="text-2xl font-bold mb-6 text-center text-green-700">
-            Admin Login
-          </h2>
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full mb-4 p-2 border rounded"
-            required
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full mb-6 p-2 border rounded"
-            required
-          />
+          {/* Top accent */}
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: '3px',
+            background: 'linear-gradient(90deg, var(--leaf-500), var(--leaf-400), var(--leaf-500))',
+            borderRadius: '24px 24px 0 0',
+          }} />
+
+          <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+            <div style={{
+              fontSize: '42px',
+              marginBottom: '16px',
+              filter: 'drop-shadow(0 0 12px rgba(34,197,94,0.4))',
+            }}>
+              🍃
+            </div>
+            <h2 style={{
+              fontFamily: 'var(--font-heading)',
+              fontSize: '26px',
+              fontWeight: 800,
+              marginBottom: '6px',
+            }}>
+              <span className="text-gradient">Admin Login</span>
+            </h2>
+            <p style={{ color: 'var(--text-muted)', fontSize: '14px' }}>
+              Masuk untuk mengelola Leaf & Loaf
+            </p>
+          </div>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '18px', marginBottom: '28px' }}>
+            <div>
+              <label style={{
+                display: 'block',
+                fontSize: '12px',
+                fontWeight: 700,
+                color: 'var(--text-secondary)',
+                marginBottom: '8px',
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px',
+              }}>
+                Email
+              </label>
+              <input
+                type="email"
+                placeholder="admin@leafnloaf.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="input-glass"
+                required
+              />
+            </div>
+            <div>
+              <label style={{
+                display: 'block',
+                fontSize: '12px',
+                fontWeight: 700,
+                color: 'var(--text-secondary)',
+                marginBottom: '8px',
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px',
+              }}>
+                Password
+              </label>
+              <input
+                type="password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="input-glass"
+                required
+              />
+            </div>
+          </div>
+
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-green-600 text-white p-2 rounded hover:bg-green-700"
+            className="btn-3d"
+            style={{
+              width: '100%',
+              padding: '16px',
+              fontSize: '16px',
+              opacity: isLoading ? 0.6 : 1,
+              cursor: isLoading ? 'not-allowed' : 'pointer',
+            }}
           >
-            Masuk
+            {isLoading ? '⏳ Memproses...' : '🔐 Masuk'}
           </button>
         </form>
       </div>
     );
   }
 
+  /* ===== DASHBOARD ===== */
   return (
-    <div className="p-8 bg-gray-50 min-h-screen text-gray-900">
-      <div className="flex justify-between items-center mb-8 bg-white p-4 rounded shadow">
-        <h1 className="text-2xl font-bold text-green-800">
-          🍃 Leaf & Loaf Admin Dashboard
-        </h1>
-        <button
-          onClick={handleLogout}
-          className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-        >
-          Logout
-        </button>
-      </div>
+    <div style={{
+      minHeight: '100vh',
+      fontFamily: 'var(--font-body)',
+      padding: '0 24px 80px',
+    }}>
 
-      <div className="bg-white p-6 rounded-lg shadow-md mb-8">
-        <h2 className="text-xl font-bold mb-4">
-          Manajemen Batch (Open/Close PO)
-        </h2>
-        <div className="flex gap-4 flex-wrap">
-          {batches.map((batch) => (
-            <div
-              key={batch.id}
-              className={`p-4 border rounded-lg flex items-center gap-4 ${batch.status === "open" ? "border-green-500 bg-green-50" : "border-gray-300 bg-gray-100"}`}
-            >
-              <div>
-                <p className="font-bold">{batch.name}</p>
-                <p className="text-sm">
-                  Status:{" "}
-                  <span
-                    className={
-                      batch.status === "open"
-                        ? "text-green-600 font-bold"
-                        : "text-red-500 font-bold"
-                    }
-                  >
-                    {batch.status.toUpperCase()}
-                  </span>
-                </p>
-              </div>
-              <button
-                onClick={() => toggleBatchStatus(batch.id, batch.status)}
-                className={`px-4 py-2 rounded text-white font-bold ${batch.status === "open" ? "bg-red-500" : "bg-green-500"}`}
-              >
-                {batch.status === "open" ? "Tutup PO" : "Buka PO"}
-              </button>
-            </div>
-          ))}
+      {/* Header */}
+      <nav style={{
+        position: 'sticky',
+        top: 0,
+        zIndex: 50,
+        background: 'rgba(7, 26, 15, 0.75)',
+        backdropFilter: 'blur(24px) saturate(1.5)',
+        WebkitBackdropFilter: 'blur(24px) saturate(1.5)',
+        borderBottom: '1px solid var(--border-glass)',
+        margin: '0 -24px',
+        padding: '0 24px',
+        marginBottom: '32px',
+      }}>
+        <div style={{
+          maxWidth: '1400px',
+          margin: '0 auto',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          height: '70px',
+        }}>
+          <div style={{
+            fontFamily: 'var(--font-heading)',
+            fontSize: '20px',
+            fontWeight: 800,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+          }}>
+            <span style={{ fontSize: '24px' }}>🍃</span>
+            <span className="text-gradient">Leaf & Loaf</span>
+            <span className="badge badge-green" style={{ fontSize: '10px' }}>ADMIN</span>
+          </div>
+          <button
+            onClick={handleLogout}
+            className="btn-3d-danger btn-3d"
+            style={{ padding: '8px 20px', fontSize: '13px' }}
+          >
+            Logout
+          </button>
         </div>
-      </div>
+      </nav>
 
-      <div className="bg-white p-6 rounded-lg shadow-md overflow-x-auto">
-        <h2 className="text-xl font-bold mb-4">Monitoring Pesanan Masuk</h2>
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="bg-gray-200">
-              <th className="p-3 border">Pelanggan</th>
-              <th className="p-3 border">Pesanan (Menu)</th>
-              <th className="p-3 border">Logistik</th>
-              <th className="p-3 border">Pembayaran</th>
-              <th className="p-3 border">Validasi QRIS</th>
-            </tr>
-          </thead>
-          <tbody>
-            {orders.map((order) => (
-              <tr key={order.id} className="hover:bg-gray-50">
-                <td className="p-3 border">
-                  <strong>{order.customer_name}</strong>
-                  <br />
-                  <a
-                    href={`https://wa.me/${order.phone}`}
-                    target="_blank"
-                    className="text-blue-500 text-sm"
-                  >
-                    WA: {order.phone}
-                  </a>
-                  <br />
-                  <span className="text-xs text-gray-500">
-                    Notes: {order.notes || "-"}
-                  </span>
-                </td>
+      <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
 
-                <td className="p-3 border">
-                  <ul className="list-disc ml-4 text-sm mb-2">
-                    {order.order_items.map((item, idx) => (
-                      <li key={idx}>
-                        {item.quantity}x{" "}
-                        <span className="font-semibold">{item.menus.name}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <span className="font-bold text-green-700">
-                    Total: Rp {order.total_price.toLocaleString("id-ID")}
-                  </span>
-                </td>
+        {/* ===== BATCH MANAGEMENT ===== */}
+        <div className="glass-card animate-in" style={{ padding: '32px', marginBottom: '32px' }}>
+          <h2 style={{
+            fontFamily: 'var(--font-heading)',
+            fontSize: '22px',
+            fontWeight: 700,
+            marginBottom: '24px',
+          }}>
+            <span className="text-gradient">Manajemen Batch</span>
+            <span style={{ color: 'var(--text-muted)', fontSize: '14px', fontWeight: 400, marginLeft: '12px' }}>
+              Open / Close PO
+            </span>
+          </h2>
 
-                <td className="p-3 border">
-                  <span
-                    className={`px-2 py-1 text-xs rounded font-bold ${order.receive_method === "Delivery" ? "bg-blue-100 text-blue-700" : "bg-orange-100 text-orange-700"}`}
-                  >
-                    {order.receive_method}
-                  </span>
-                  {order.receive_method === "Delivery" && (
-                    <div className="mt-2 text-xs">
-                      <p>{order.address_detail}</p>
-                      <a
-                        href={`http://maps.google.com/?q=${order.latitude},${order.longitude}`}
-                        target="_blank"
-                        className="text-blue-500 underline"
-                      >
-                        📍 Buka di Maps
-                      </a>
-                    </div>
-                  )}
-                </td>
-                <td className="p-3 border">
-                  <strong>{order.payment_method}</strong>
-                  <br />
-                  {order.payment_method === "QRIS" && order.qris_proof_url && (
-                    <a
-                      href={order.qris_proof_url}
-                      target="_blank"
-                      className="text-blue-500 text-xs underline"
-                    >
-                      Lihat Bukti
-                    </a>
-                  )}
-                </td>
-                <td className="p-3 border">
-                  {order.payment_method === "COD" ? (
-                    <span className="text-green-600 font-bold text-sm">
-                      COD
+          <div style={{
+            display: 'flex',
+            gap: '16px',
+            flexWrap: 'wrap',
+          }}>
+            {batches.map((batch) => (
+              <div
+                key={batch.id}
+                style={{
+                  padding: '20px 24px',
+                  borderRadius: '18px',
+                  background: batch.status === 'open'
+                    ? 'rgba(34, 197, 94, 0.08)'
+                    : 'rgba(7, 26, 15, 0.4)',
+                  border: `1.5px solid ${batch.status === 'open' ? 'rgba(34, 197, 94, 0.3)' : 'var(--border-glass)'}`,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '20px',
+                  transition: 'all 0.3s var(--ease-smooth)',
+                  minWidth: '260px',
+                }}
+              >
+                <div style={{ flex: 1 }}>
+                  <p style={{
+                    fontFamily: 'var(--font-heading)',
+                    fontWeight: 700,
+                    fontSize: '16px',
+                    color: 'var(--text-primary)',
+                    marginBottom: '6px',
+                  }}>
+                    {batch.name}
+                  </p>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span className={batch.status === 'open' ? 'pulse-dot' : 'pulse-dot pulse-dot-red'} />
+                    <span style={{
+                      fontSize: '13px',
+                      fontWeight: 700,
+                      color: batch.status === 'open' ? 'var(--leaf-400)' : '#f87171',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px',
+                    }}>
+                      {batch.status}
                     </span>
-                  ) : (
-                    <div className="flex gap-2">
-                      {order.order_status === "pending" && (
-                        <>
-                          <button
-                            onClick={() =>
-                              updateOrderStatus(order.id, "accepted")
-                            }
-                            className="bg-green-500 text-white px-2 py-1 rounded text-xs hover:bg-green-600"
-                          >
-                            Terima
-                          </button>
-                          <button
-                            onClick={() =>
-                              updateOrderStatus(order.id, "rejected")
-                            }
-                            className="bg-red-500 text-white px-2 py-1 rounded text-xs hover:bg-red-600"
-                          >
-                            Tolak
-                          </button>
-                        </>
-                      )}
-                      {order.order_status === "accepted" && (
-                        <span className="text-green-600 font-bold text-sm">
-                          ✅ Diterima
-                        </span>
-                      )}
-                      {order.order_status === "rejected" && (
-                        <span className="text-red-600 font-bold text-sm">
-                          ❌ Ditolak
-                        </span>
-                      )}
-                    </div>
-                  )}
-                </td>
-              </tr>
+                  </div>
+                </div>
+                <button
+                  onClick={() => toggleBatchStatus(batch.id, batch.status)}
+                  className={`btn-3d ${batch.status === 'open' ? 'btn-3d-danger' : ''}`}
+                  style={{ padding: '8px 20px', fontSize: '13px', whiteSpace: 'nowrap' }}
+                >
+                  {batch.status === "open" ? "Tutup PO" : "Buka PO"}
+                </button>
+              </div>
             ))}
-          </tbody>
-        </table>
+          </div>
+        </div>
+
+        {/* ===== ORDERS TABLE ===== */}
+        <div className="glass-card animate-in" style={{
+          padding: '32px',
+          overflow: 'hidden',
+          animationDelay: '0.15s',
+        }}>
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: '24px',
+          }}>
+            <h2 style={{
+              fontFamily: 'var(--font-heading)',
+              fontSize: '22px',
+              fontWeight: 700,
+            }}>
+              <span className="text-gradient">Monitoring Pesanan</span>
+              <span style={{ color: 'var(--text-muted)', fontSize: '14px', fontWeight: 400, marginLeft: '12px' }}>
+                {orders.length} pesanan
+              </span>
+            </h2>
+          </div>
+
+          <div style={{ overflowX: 'auto', borderRadius: '16px', border: '1px solid var(--border-glass)' }}>
+            <table className="table-glass">
+              <thead>
+                <tr>
+                  <th>Pelanggan</th>
+                  <th>Pesanan (Menu)</th>
+                  <th>Logistik</th>
+                  <th>Pembayaran</th>
+                  <th>Validasi</th>
+                </tr>
+              </thead>
+              <tbody>
+                {orders.map((order) => (
+                  <tr key={order.id}>
+                    {/* Customer */}
+                    <td>
+                      <div style={{
+                        fontWeight: 700,
+                        color: 'var(--text-primary)',
+                        fontSize: '14px',
+                        marginBottom: '4px',
+                      }}>
+                        {order.customer_name}
+                      </div>
+                      <a
+                        href={`https://wa.me/${order.phone}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          fontSize: '12px',
+                          color: 'var(--leaf-400)',
+                          display: 'block',
+                          marginBottom: '4px',
+                        }}
+                      >
+                        📱 {order.phone}
+                      </a>
+                      <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                        Notes: {order.notes || "—"}
+                      </div>
+                    </td>
+
+                    {/* Order items */}
+                    <td>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginBottom: '8px' }}>
+                        {order.order_items.map((item, idx) => (
+                          <div key={idx} style={{ fontSize: '13px' }}>
+                            <span style={{ color: 'var(--leaf-400)', fontWeight: 700 }}>{item.quantity}x</span>{' '}
+                            <span style={{ color: 'var(--text-primary)' }}>{item.menus.name}</span>
+                          </div>
+                        ))}
+                      </div>
+                      <div style={{
+                        fontFamily: 'var(--font-heading)',
+                        fontWeight: 700,
+                        fontSize: '14px',
+                      }}>
+                        <span className="text-gradient">
+                          Rp {order.total_price.toLocaleString("id-ID")}
+                        </span>
+                      </div>
+                    </td>
+
+                    {/* Logistics */}
+                    <td>
+                      <span className={`badge ${order.receive_method === "Delivery" ? "badge-blue" : "badge-orange"}`}>
+                        {order.receive_method === "Delivery" ? "🚚" : "📦"} {order.receive_method}
+                      </span>
+                      {order.receive_method === "Delivery" && (
+                        <div style={{ marginTop: '8px', fontSize: '12px' }}>
+                          <p style={{ color: 'var(--text-muted)', marginBottom: '4px' }}>
+                            {order.address_detail}
+                          </p>
+                          <a
+                            href={`http://maps.google.com/?q=${order.latitude},${order.longitude}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ color: 'var(--leaf-400)', fontSize: '12px' }}
+                          >
+                            📍 Buka di Maps
+                          </a>
+                        </div>
+                      )}
+                    </td>
+
+                    {/* Payment */}
+                    <td>
+                      <span style={{
+                        fontWeight: 700,
+                        color: 'var(--text-primary)',
+                        fontSize: '14px',
+                        display: 'block',
+                        marginBottom: '4px',
+                      }}>
+                        {order.payment_method}
+                      </span>
+                      {order.payment_method === "QRIS" && order.qris_proof_url && (
+                        <a
+                          href={order.qris_proof_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{ fontSize: '12px', color: '#60a5fa' }}
+                        >
+                          🖼 Lihat Bukti
+                        </a>
+                      )}
+                    </td>
+
+                    {/* Validation */}
+                    <td>
+                      {order.payment_method === "COD" ? (
+                        <span className="badge badge-green">✅ COD</span>
+                      ) : (
+                        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                          {order.order_status === "pending" && (
+                            <>
+                              <button
+                                onClick={() => updateOrderStatus(order.id, "accepted")}
+                                className="btn-3d"
+                                style={{
+                                  padding: '6px 14px',
+                                  fontSize: '12px',
+                                  borderRadius: '10px',
+                                }}
+                              >
+                                ✅ Terima
+                              </button>
+                              <button
+                                onClick={() => updateOrderStatus(order.id, "rejected")}
+                                className="btn-3d btn-3d-danger"
+                                style={{
+                                  padding: '6px 14px',
+                                  fontSize: '12px',
+                                  borderRadius: '10px',
+                                }}
+                              >
+                                ❌ Tolak
+                              </button>
+                            </>
+                          )}
+                          {order.order_status === "accepted" && (
+                            <span className="badge badge-green">✅ Diterima</span>
+                          )}
+                          {order.order_status === "rejected" && (
+                            <span className="badge badge-red">❌ Ditolak</span>
+                          )}
+                        </div>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   );
