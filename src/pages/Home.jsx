@@ -1,6 +1,102 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "../config/supabaseClient";
+
+import heroBackground from "../assets/background.png";
+
+const TypewriterText = ({ text, speed = 30 }) => {
+  const [displayedText, setDisplayedText] = useState("");
+  const [isIntersecting, setIsIntersecting] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsIntersecting(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.2 },
+    );
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!isIntersecting) return;
+    let i = 0;
+    const timer = setInterval(() => {
+      setDisplayedText(text.substring(0, i));
+      i++;
+      if (i > text.length) clearInterval(timer);
+    }, speed);
+    return () => clearInterval(timer);
+  }, [isIntersecting, text, speed]);
+
+  return <span ref={ref}>{displayedText}</span>;
+};
+
+const MenuCard = ({ menu, isBundling }) => {
+  const videoRef = useRef(null);
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+    if (videoRef.current) {
+      videoRef.current.playbackRate = 0.5;
+      videoRef.current.play();
+    }
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    if (videoRef.current) {
+      videoRef.current.pause();
+      videoRef.current.currentTime = 0;
+    }
+  };
+
+  return (
+    <Link
+      to="/checkout"
+      className="flex flex-col items-center justify-center group cursor-pointer w-full text-center"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      <div className="relative w-64 h-64 mb-6 transition-transform duration-500 transform group-hover:scale-110 group-hover:-translate-y-6">
+        {isBundling && (
+          <div className="absolute -top-2 -right-2 bg-[#f4d053] text-[#2c4c44] text-xs font-black px-4 py-1 rounded-full shadow-xl z-20 rotate-12">
+            BEST DEAL
+          </div>
+        )}
+
+        <img
+          src="/sandwich-ayam.png"
+          alt={menu.name}
+          className={`absolute w-full h-full object-contain drop-shadow-2xl transition-opacity duration-500 ${isHovered ? "opacity-0" : "opacity-100"}`}
+        />
+
+        <video
+          ref={videoRef}
+          src="/sandwich-ayam.mp4"
+          muted
+          playsInline
+          className={`absolute w-full h-full object-contain drop-shadow-2xl transition-opacity duration-500 ${isHovered ? "opacity-100" : "opacity-0"}`}
+        />
+      </div>
+
+      <div className="transition-transform duration-500 group-hover:-translate-y-2">
+        <h4 className="text-3xl font-black mb-1 text-[#2c4c44] drop-shadow-sm transition-colors duration-300 group-hover:text-[#f4d053]">
+          {menu.name}
+        </h4>
+        <div className="text-xl font-bold text-[#e6e2d1] bg-[#2c4c44] px-4 py-1 rounded-full inline-block shadow-lg mt-2 group-hover:bg-[#f4d053] group-hover:text-[#2c4c44] transition-colors duration-300">
+          Rp {menu.price.toLocaleString("id-ID")}
+        </div>
+      </div>
+    </Link>
+  );
+};
 
 export default function Home() {
   const [menus, setMenus] = useState([]);
@@ -18,13 +114,11 @@ export default function Home() {
       .from("menus")
       .select("*")
       .order("price", { ascending: true });
-
     const { data: testimonialData } = await supabase
       .from("testimonials")
       .select("*, batches(name)")
       .order("created_at", { ascending: false })
       .limit(6);
-
     const { data: batchData } = await supabase
       .from("batches")
       .select("id")
@@ -44,13 +138,11 @@ export default function Home() {
   const handleSubmitTestimonial = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
-
     if (!activeBatch) {
       alert("Maaf, testimoni belum bisa dikirim karena PO sedang tutup.");
       setIsSubmitting(false);
       return;
     }
-
     try {
       const { error } = await supabase.from("testimonials").insert([
         {
@@ -60,9 +152,7 @@ export default function Home() {
           rating: newTestiRating,
         },
       ]);
-
       if (error) throw error;
-
       alert("Terima kasih! Ulasan dan rating bintangmu sudah terbit.");
       setNewTestiName("");
       setNewTestiContent("");
@@ -86,14 +176,13 @@ export default function Home() {
         ).toFixed(1)
       : 0;
 
-  const renderStars = (rating, size = "w-5 h-5") => {
+  const renderStars = (rating) => {
     return (
       <div className="flex gap-1">
         {[1, 2, 3, 4, 5].map((star) => (
           <svg
             key={star}
-            className={`${size} transition-colors duration-200`}
-            style={{ color: star <= rating ? "#fbbf24" : "rgba(134,239,172,0.2)" }}
+            className={`w-5 h-5 ${star <= rating ? "text-[#f4d053]" : "text-gray-300"}`}
             fill="currentColor"
             viewBox="0 0 20 20"
           >
@@ -106,450 +195,186 @@ export default function Home() {
 
   if (isLoading)
     return (
-      <div style={{
-        minHeight: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: '24px',
-        background: 'var(--bg-body)',
-      }}>
-        <div style={{ fontSize: '60px', animation: 'float 3s ease-in-out infinite' }}>🍃</div>
-        <div className="spinner" />
-        <p style={{ color: 'var(--leaf-400)', fontFamily: 'var(--font-heading)', fontWeight: 700, fontSize: '18px' }}>
-          Memuat Leaf & Loaf...
-        </p>
+      <div className="min-h-screen flex items-center justify-center text-xl font-bold text-[#728f59] bg-[#f9f8f3]">
+        Memuat Leaf & Loaf...
       </div>
     );
 
   return (
-    <div style={{ minHeight: '100vh', fontFamily: 'var(--font-body)' }}>
-
-      {/* ===== NAVBAR ===== */}
-      <nav style={{
-        position: 'sticky',
-        top: 0,
-        zIndex: 50,
-        background: 'rgba(7, 26, 15, 0.75)',
-        backdropFilter: 'blur(24px) saturate(1.5)',
-        WebkitBackdropFilter: 'blur(24px) saturate(1.5)',
-        borderBottom: '1px solid var(--border-glass)',
-        padding: '0 24px',
-      }}>
-        <div style={{
-          maxWidth: '1200px',
-          margin: '0 auto',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          height: '70px',
-        }}>
-          <div style={{
-            fontFamily: 'var(--font-heading)',
-            fontSize: '24px',
-            fontWeight: 800,
-            display: 'flex',
-            alignItems: 'center',
-            gap: '10px',
-          }}>
-            <span style={{ fontSize: '28px', filter: 'drop-shadow(0 0 8px rgba(34,197,94,0.4))' }}>🍃</span>
-            <span className="text-gradient">Leaf & Loaf</span>
-          </div>
-          <Link to="/checkout" className="btn-3d" style={{ padding: '10px 24px', fontSize: '14px' }}>
-            Pesan Sekarang
-          </Link>
+    <div className="min-h-screen bg-[#f9f8f3] text-gray-900 font-sans">
+      <nav className="fixed top-0 left-0 w-full z-50 bg-transparent py-8 pointer-events-none">
+        <div className="max-w-5xl mx-auto px-6 flex flex-col pointer-events-auto">
+          <ul className="flex justify-center md:justify-between items-center gap-8 md:gap-16 text-[#e6e2d1] font-bold tracking-widest text-sm mb-3">
+            <li className="hover:text-white cursor-pointer transition drop-shadow-md">
+              <a href="#">HOME</a>
+            </li>
+            <li className="hover:text-white cursor-pointer transition drop-shadow-md">
+              <a href="#products">OUR PRODUCTS</a>
+            </li>
+            <li className="hover:text-white cursor-pointer transition drop-shadow-md">
+              <a href="#contact">CONTACT</a>
+            </li>
+          </ul>
+          <div className="w-full h-[2px] bg-[#e6e2d1] rounded-full opacity-80 shadow-sm"></div>
         </div>
       </nav>
 
-      {/* ===== HERO ===== */}
-      <section style={{
-        position: 'relative',
-        overflow: 'hidden',
-        padding: '100px 24px 120px',
-        textAlign: 'center',
-        background: 'linear-gradient(180deg, rgba(7,26,15,0) 0%, rgba(15,51,33,0.3) 50%, rgba(7,26,15,0) 100%)',
-      }}>
-        {/* Floating leaf decorations */}
-        <div className="leaf-deco" style={{ top: '10%', left: '8%', fontSize: '100px', animationDelay: '0s' }}>🥬</div>
-        <div className="leaf-deco" style={{ top: '20%', right: '10%', fontSize: '70px', animationDelay: '-3s' }}>🌿</div>
-        <div className="leaf-deco" style={{ bottom: '15%', left: '15%', fontSize: '60px', animationDelay: '-5s' }}>🍃</div>
-        <div className="leaf-deco" style={{ bottom: '25%', right: '5%', fontSize: '90px', animationDelay: '-7s' }}>🥦</div>
+      <section
+        className="relative w-full h-screen flex flex-col bg-cover bg-center bg-no-repeat bg-fixed"
+        style={{ backgroundImage: `url(${heroBackground})` }}
+      >
+      </section>
 
-        <div style={{ maxWidth: '800px', margin: '0 auto', position: 'relative', zIndex: 1 }}
-          className="animate-in"
-        >
-          <div className="badge badge-green" style={{ marginBottom: '24px', fontSize: '13px' }}>
-            <span className="pulse-dot" />
-            Fresh & Healthy
+      <section
+        id="history"
+        className="relative w-full overflow-hidden bg-[#728f59]"
+      >
+        <img
+          src="/history.png"
+          alt="Leaf & Loaf History Background"
+          className="w-full h-auto min-h-[600px] object-cover block"
+        />
+
+        {/* DI SINI PERUBAHANNYA: items-start agar muncul dari atas, lalu pt-32 / pt-48 agar posisinya turun ke bawah sedikit */}
+        <div className="absolute inset-0 flex items-start justify-center px-6 pt-80 md:pt-80 lg:pt-80 md:px-16 lg:px-24">
+          <div className="w-full max-w-7xl grid md:grid-cols-3 gap-6 lg:gap-16 items-start">
+            <div className="text-white text-left text-base md:text-lg lg:text-xl font-medium leading-relaxed drop-shadow-lg">
+              <p className="mb-4">
+                <TypewriterText
+                  text="Leaf & Loaf was born out of a simple need: finding healthy, quick, and satisfying meals during busy university days. We realized that most fast-food options lacked nutrition, while healthy food was often too expensive or hard to find."
+                  speed={20}
+                />
+              </p>
+            </div>
+
+            <div className="hidden md:block"></div>
+
+            {/* Margin-top dihapus agar paragraf kanan mulai sejajar dengan paragraf kiri (muncul dari atas) */}
+            <div className="text-white text-left text-base md:text-lg lg:text-xl font-medium leading-relaxed drop-shadow-lg">
+              <p className="mb-4 mt-1 lg:mt-3">
+                <TypewriterText
+                  text="So, we started creating our own wholesome sandwiches, packed with fresh vegetables and flavorful fillings."
+                  speed={30}
+                />
+              </p>
+              <p>
+                <TypewriterText
+                  text="What started as a personal quest soon became a mission to provide our fellow students with accessible, nutritious, and delicious meals that keep them energized throughout the day."
+                  speed={25}
+                />
+              </p>
+            </div>
           </div>
-          <h1 style={{
-            fontFamily: 'var(--font-heading)',
-            fontSize: 'clamp(36px, 6vw, 64px)',
-            fontWeight: 900,
-            lineHeight: 1.1,
-            marginBottom: '24px',
-            letterSpacing: '-1.5px',
-          }}>
-            <span className="text-gradient">Healthy Sandwich,</span>
-            <br />
-            <span style={{ color: 'var(--text-primary)' }}>Praktis & Mengenyangkan!</span>
-          </h1>
-          <p style={{
-            fontSize: '18px',
-            color: 'var(--text-secondary)',
-            maxWidth: '600px',
-            margin: '0 auto 40px',
-            lineHeight: 1.7,
-            opacity: 0.85,
-          }}>
-            Solusi makan sehat di tengah padatnya aktivitas kampus Jember.
-            Dibuat fresh setiap batch dengan isian melimpah. Tinggal pesan, kami
-            antar langsung ke depan kos-mu!
-          </p>
-          <Link
-            to="/checkout"
-            className="btn-3d"
-            style={{ padding: '18px 44px', fontSize: '18px', borderRadius: '20px' }}
-          >
-            Ikut PO Batch Ini 🚀
-          </Link>
         </div>
       </section>
 
-      {/* ===== MENU SECTION ===== */}
-      <section style={{ padding: '80px 24px', maxWidth: '1200px', margin: '0 auto' }}>
-        <div className="animate-in" style={{ textAlign: 'center', marginBottom: '60px' }}>
-          <h2 style={{
-            fontFamily: 'var(--font-heading)',
-            fontSize: 'clamp(28px, 4vw, 42px)',
-            fontWeight: 800,
-            marginBottom: '12px',
-          }}>
-            <span className="text-gradient">Menu Andalan Kami</span>
-          </h2>
-          <p style={{ color: 'var(--text-muted)', fontSize: '16px' }}>
-            Harganya transparan, porsinya bikin kenyang!
+      <section id="products" className="py-24 px-4 max-w-6xl mx-auto">
+        <div className="text-center mb-24 border-b-2 border-[#e6e2d1] pb-10 mt-10">
+          <h2 className="text-5xl font-black text-[#2c4c44]">Our Products</h2>
+          <p className="text-[#728f59] mt-3 text-lg font-medium">
+            Pilih sandwich sehatmu, klik untuk memesan!
           </p>
-          <div className="divider" style={{ maxWidth: '120px', margin: '24px auto 0' }} />
         </div>
 
-        {/* Satuan Menu */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-          gap: '24px',
-          marginBottom: menuBundling.length > 0 ? '60px' : '0',
-        }}>
-          {menuSatuan.map((menu, idx) => (
-            <div
-              key={menu.id}
-              className="glass-card card-3d animate-in"
-              style={{
-                padding: '32px',
-                position: 'relative',
-                overflow: 'hidden',
-                animationDelay: `${idx * 0.1}s`,
-              }}
-            >
-              <div className="card-3d-inner">
-                {/* Corner glow */}
-                <div style={{
-                  position: 'absolute',
-                  top: '-30px',
-                  right: '-30px',
-                  width: '120px',
-                  height: '120px',
-                  background: 'radial-gradient(circle, rgba(34,197,94,0.15) 0%, transparent 70%)',
-                  borderRadius: '50%',
-                  pointerEvents: 'none',
-                }} />
-                <h4 style={{
-                  fontFamily: 'var(--font-heading)',
-                  fontSize: '22px',
-                  fontWeight: 700,
-                  marginBottom: '10px',
-                  color: 'var(--text-primary)',
-                  position: 'relative',
-                  zIndex: 1,
-                }}>
-                  {menu.name}
-                </h4>
-                <p style={{
-                  color: 'var(--text-muted)',
-                  fontSize: '14px',
-                  marginBottom: '24px',
-                  lineHeight: 1.6,
-                  minHeight: '44px',
-                  position: 'relative',
-                  zIndex: 1,
-                }}>
-                  {menu.description}
-                </p>
-                <div style={{
-                  fontFamily: 'var(--font-heading)',
-                  fontSize: '28px',
-                  fontWeight: 800,
-                  position: 'relative',
-                  zIndex: 1,
-                }}>
-                  <span className="text-gradient">Rp {menu.price.toLocaleString("id-ID")}</span>
-                </div>
-              </div>
-            </div>
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-y-20 gap-x-8 mb-16">
+          {menuSatuan.map((menu) => (
+            <MenuCard key={menu.id} menu={menu} isBundling={false} />
           ))}
         </div>
 
-        {/* Bundling Menu */}
         {menuBundling.length > 0 && (
-          <>
-            <div className="divider" style={{ margin: '0 0 60px' }} />
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-              gap: '24px',
-            }}>
-              {menuBundling.map((menu, idx) => (
-                <div
-                  key={menu.id}
-                  className="glass-card card-3d animate-in"
-                  style={{
-                    padding: '32px',
-                    position: 'relative',
-                    overflow: 'hidden',
-                    borderColor: 'rgba(251, 191, 36, 0.2)',
-                    animationDelay: `${idx * 0.1}s`,
-                  }}
-                >
-                  <div className="card-3d-inner">
-                    {/* Gold corner glow */}
-                    <div style={{
-                      position: 'absolute',
-                      top: '-30px',
-                      right: '-30px',
-                      width: '120px',
-                      height: '120px',
-                      background: 'radial-gradient(circle, rgba(251,191,36,0.12) 0%, transparent 70%)',
-                      borderRadius: '50%',
-                      pointerEvents: 'none',
-                    }} />
-                    <div className="badge badge-gold" style={{ marginBottom: '16px' }}>
-                      ⭐ BEST DEAL
-                    </div>
-                    <h4 style={{
-                      fontFamily: 'var(--font-heading)',
-                      fontSize: '22px',
-                      fontWeight: 700,
-                      marginBottom: '10px',
-                      color: 'var(--text-primary)',
-                      position: 'relative',
-                      zIndex: 1,
-                    }}>
-                      {menu.name}
-                    </h4>
-                    <p style={{
-                      color: 'var(--text-muted)',
-                      fontSize: '14px',
-                      marginBottom: '24px',
-                      lineHeight: 1.6,
-                      minHeight: '44px',
-                      position: 'relative',
-                      zIndex: 1,
-                    }}>
-                      {menu.description}
-                    </p>
-                    <div style={{
-                      fontFamily: 'var(--font-heading)',
-                      fontSize: '28px',
-                      fontWeight: 800,
-                      position: 'relative',
-                      zIndex: 1,
-                    }}>
-                      <span className="text-gradient-gold">Rp {menu.price.toLocaleString("id-ID")}</span>
-                    </div>
-                  </div>
-                </div>
+          <div className="border-t border-[#e6e2d1] pt-24 mt-16">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-y-20 gap-x-8">
+              {menuBundling.map((menu) => (
+                <MenuCard key={menu.id} menu={menu} isBundling={true} />
               ))}
             </div>
-          </>
+          </div>
         )}
       </section>
 
-      {/* ===== TESTIMONIALS ===== */}
-      <section style={{
-        padding: '80px 24px',
-        background: 'linear-gradient(180deg, rgba(15,51,33,0.2) 0%, rgba(7,26,15,0) 100%)',
-      }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-          <div className="animate-in" style={{ textAlign: 'center', marginBottom: '60px' }}>
-            <h2 style={{
-              fontFamily: 'var(--font-heading)',
-              fontSize: 'clamp(28px, 4vw, 42px)',
-              fontWeight: 800,
-              marginBottom: '16px',
-            }}>
-              <span className="text-gradient">Apa Kata Mereka?</span>
+      <section className="bg-[#e6e2d1]/30 py-24 px-4 border-t border-[#e6e2d1]">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16 pb-10 border-b-2 border-[#e6e2d1] flex flex-col items-center">
+            <h2 className="text-4xl font-black text-[#2c4c44] mb-4">
+              Apa Kata Mereka?
             </h2>
-
             {testimonials.length > 0 && (
-              <div className="glass" style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '14px',
-                padding: '12px 28px',
-                borderRadius: '100px',
-              }}>
-                <span style={{
-                  fontFamily: 'var(--font-heading)',
-                  fontSize: '28px',
-                  fontWeight: 800,
-                  color: 'var(--text-primary)',
-                }}>
+              <div className="flex items-center gap-3 bg-white px-6 py-3 rounded-full shadow-sm border border-[#e6e2d1]">
+                <span className="text-3xl font-black text-[#2c4c44]">
                   {averageRating}
                 </span>
-                {renderStars(Math.round(averageRating), "w-7 h-7")}
-                <span style={{ color: 'var(--text-muted)', fontSize: '14px' }}>
+                <div className="flex gap-1">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <svg
+                      key={star}
+                      className={`w-8 h-8 ${star <= Math.round(averageRating) ? "text-[#f4d053]" : "text-gray-300"}`}
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                  ))}
+                </div>
+                <span className="text-gray-500 font-medium">
                   ({testimonials.length} Ulasan)
                 </span>
               </div>
             )}
-            <div className="divider" style={{ maxWidth: '120px', margin: '24px auto 0' }} />
           </div>
 
           {testimonials.length > 0 ? (
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-              gap: '24px',
-              marginBottom: '60px',
-            }}>
-              {testimonials.map((testi, idx) => (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+              {testimonials.map((testi) => (
                 <div
                   key={testi.id}
-                  className="glass-card animate-in"
-                  style={{
-                    padding: '28px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    animationDelay: `${idx * 0.1}s`,
-                  }}
+                  className="bg-white p-7 rounded-3xl shadow-sm relative group hover:shadow-xl hover:border-[#f4d053] border border-[#e6e2d1] transition-all"
                 >
-                  <div style={{ marginBottom: '16px' }}>{renderStars(testi.rating || 5)}</div>
-                  <p style={{
-                    color: 'var(--text-secondary)',
-                    fontSize: '16px',
-                    fontStyle: 'italic',
-                    lineHeight: 1.7,
-                    marginBottom: '20px',
-                    flex: 1,
-                    opacity: 0.9,
-                  }}>
+                  <div className="mb-4">{renderStars(testi.rating || 5)}</div>
+                  <p className="text-gray-700 italic mb-6 leading-relaxed relative z-10 text-lg">
                     "{testi.content}"
                   </p>
-                  <div className="divider" style={{ marginBottom: '16px' }} />
-                  <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                  }}>
-                    <span style={{
-                      fontWeight: 700,
-                      color: 'var(--text-primary)',
-                      fontSize: '15px',
-                    }}>
+                  <div className="flex justify-between items-center relative z-10 mt-auto pt-4 border-t border-gray-100 group-hover:border-[#e6e2d1] transition-colors">
+                    <div className="font-bold text-[#2c4c44]">
                       {testi.customer_name}
-                    </span>
-                    <span className="badge badge-green" style={{ fontSize: '11px' }}>
+                    </div>
+                    <div className="text-xs text-[#728f59] bg-[#728f59]/10 px-3 py-1 rounded-full font-bold">
                       Batch {testi.batches?.name || "Lalu"}
-                    </span>
+                    </div>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="glass-card animate-in" style={{
-              textAlign: 'center',
-              padding: '48px',
-              marginBottom: '60px',
-              color: 'var(--text-muted)',
-              fontSize: '16px',
-              fontStyle: 'italic',
-            }}>
-              Belum ada testimoni. Jadilah yang pertama memberikan ulasan di
-              batch ini!
+            <div className="text-center bg-white p-10 rounded-3xl shadow-sm mb-16 text-gray-500 italic text-lg border border-[#e6e2d1]">
+              Belum ada testimoni.
             </div>
           )}
 
-          {/* Testimonial Form */}
-          <div className="glass-card animate-in" style={{
-            maxWidth: '580px',
-            margin: '0 auto',
-            padding: '40px',
-            position: 'relative',
-            overflow: 'hidden',
-            borderColor: 'rgba(251, 191, 36, 0.2)',
-          }}>
-            {/* Gold top accent bar */}
-            <div style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              height: '3px',
-              background: 'linear-gradient(90deg, var(--gold-400), var(--gold-500), var(--gold-400))',
-              borderRadius: '24px 24px 0 0',
-            }} />
-
-            <h3 style={{
-              fontFamily: 'var(--font-heading)',
-              fontSize: '26px',
-              fontWeight: 800,
-              marginBottom: '8px',
-              color: 'var(--text-primary)',
-            }}>
-              Kasih Rating Dong! ⭐
+          <div className="max-w-xl mx-auto mt-20 bg-white p-8 md:p-10 rounded-3xl shadow-xl border-2 border-[#f4d053] transform relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-3 bg-[#f4d053]"></div>
+            <h3 className="text-3xl font-black text-[#2c4c44] mb-2">
+              Kasih Rating Dong!
             </h3>
-            <p style={{ color: 'var(--text-muted)', marginBottom: '32px', fontSize: '15px' }}>
-              Pilih bintangmu dan ceritakan pengalaman makan Sandwich Leaf & Loaf!
+            <p className="text-gray-600 mb-8 text-lg">
+              Pilih bintangmu dan ceritakan pengalaman makan Sandwich Leaf &
+              Loaf!
             </p>
-
-            <form onSubmit={handleSubmitTestimonial} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-              {/* Star rating */}
+            <form onSubmit={handleSubmitTestimonial} className="space-y-6">
               <div>
-                <label style={{
-                  display: 'block',
-                  fontSize: '13px',
-                  fontWeight: 700,
-                  color: 'var(--text-secondary)',
-                  marginBottom: '10px',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.5px',
-                }}>
-                  Rating Bintang <span style={{ color: 'var(--tomato)' }}>*</span>
+                <label className="block text-sm font-bold text-[#2c4c44] mb-2 leading-tight">
+                  Rating Bintang <span className="text-red-500">*</span>
                 </label>
-                <div style={{ display: 'flex', gap: '8px' }}>
+                <div className="flex gap-2">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <button
                       key={star}
                       type="button"
                       onClick={() => setNewTestiRating(star)}
-                      style={{
-                        background: 'none',
-                        border: 'none',
-                        cursor: 'pointer',
-                        padding: '4px',
-                        transition: 'transform 0.2s var(--ease-spring)',
-                        transform: star <= newTestiRating ? 'scale(1.15)' : 'scale(1)',
-                      }}
+                      className="focus:outline-none transition-transform hover:scale-110"
                     >
                       <svg
-                        style={{
-                          width: '40px',
-                          height: '40px',
-                          color: star <= newTestiRating ? '#fbbf24' : 'rgba(134,239,172,0.15)',
-                          transition: 'color 0.2s, filter 0.2s',
-                          filter: star <= newTestiRating ? 'drop-shadow(0 0 6px rgba(251,191,36,0.4))' : 'none',
-                        }}
+                        className={`w-10 h-10 transition-colors ${star <= newTestiRating ? "text-[#f4d053]" : "text-gray-200 hover:text-[#f4d053]/50"}`}
                         fill="currentColor"
                         viewBox="0 0 20 20"
                       >
@@ -559,18 +384,9 @@ export default function Home() {
                   ))}
                 </div>
               </div>
-
               <div>
-                <label style={{
-                  display: 'block',
-                  fontSize: '13px',
-                  fontWeight: 700,
-                  color: 'var(--text-secondary)',
-                  marginBottom: '8px',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.5px',
-                }}>
-                  Nama Kamu <span style={{ color: 'var(--tomato)' }}>*</span>
+                <label className="block text-sm font-bold text-[#2c4c44] mb-1 leading-tight">
+                  Nama Kamu <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -578,21 +394,12 @@ export default function Home() {
                   onChange={(e) => setNewTestiName(e.target.value)}
                   required
                   placeholder="Contoh: Rina Jember"
-                  className="input-glass"
+                  className="w-full border-2 border-[#e6e2d1] p-3 rounded-xl focus:border-[#f4d053] focus:ring-0 transition outline-none"
                 />
               </div>
-
               <div>
-                <label style={{
-                  display: 'block',
-                  fontSize: '13px',
-                  fontWeight: 700,
-                  color: 'var(--text-secondary)',
-                  marginBottom: '8px',
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.5px',
-                }}>
-                  Isi Testimoni <span style={{ color: 'var(--tomato)' }}>*</span>
+                <label className="block text-sm font-bold text-[#2c4c44] mb-1 leading-tight">
+                  Isi Testimoni <span className="text-red-500">*</span>
                 </label>
                 <textarea
                   value={newTestiContent}
@@ -600,22 +407,13 @@ export default function Home() {
                   required
                   placeholder="Tuliskan jujur ya..."
                   rows="4"
-                  className="input-glass"
-                  style={{ resize: 'vertical' }}
-                />
+                  className="w-full border-2 border-[#e6e2d1] p-3 rounded-xl focus:border-[#f4d053] focus:ring-0 transition outline-none"
+                ></textarea>
               </div>
-
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="btn-3d-gold btn-3d"
-                style={{
-                  width: '100%',
-                  padding: '16px',
-                  fontSize: '16px',
-                  opacity: isSubmitting ? 0.6 : 1,
-                  cursor: isSubmitting ? 'not-allowed' : 'pointer',
-                }}
+                className="w-full bg-[#2c4c44] text-[#e6e2d1] font-black py-4 rounded-xl text-lg hover:bg-[#1f3630] transition shadow-lg transform hover:-translate-y-1 disabled:bg-gray-400 disabled:text-gray-200"
               >
                 {isSubmitting ? "Sedang Mengirim..." : "Kirim Rating Saya! 🚀"}
               </button>
@@ -624,34 +422,16 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ===== FOOTER ===== */}
-      <footer style={{
-        padding: '60px 24px',
-        textAlign: 'center',
-        background: 'linear-gradient(180deg, rgba(7,26,15,0) 0%, rgba(5,46,22,0.5) 100%)',
-        borderTop: '1px solid var(--border-glass)',
-      }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-          <p style={{
-            fontFamily: 'var(--font-heading)',
-            fontSize: '24px',
-            fontWeight: 800,
-            marginBottom: '8px',
-          }}>
-            <span style={{ filter: 'drop-shadow(0 0 8px rgba(34,197,94,0.4))' }}>🍃</span>{' '}
-            <span className="text-gradient">Leaf & Loaf</span>
-          </p>
-          <p style={{ color: 'var(--text-muted)', fontSize: '14px' }}>
+      <footer
+        id="contact"
+        className="bg-[#2c4c44] text-[#e6e2d1] py-12 text-center"
+      >
+        <div className="max-w-6xl mx-auto px-4">
+          <p className="font-black text-2xl mb-2">🍃 Leaf & Loaf</p>
+          <p className="text-sm opacity-80">
             Healthy Sandwich for University Students Jember Area.
           </p>
-          <div style={{
-            marginTop: '32px',
-            paddingTop: '32px',
-            borderTop: '1px solid var(--border-glass)',
-            color: 'var(--text-muted)',
-            fontSize: '12px',
-            opacity: 0.6,
-          }}>
+          <div className="text-xs opacity-60 mt-8 pt-8 border-t border-[#728f59]">
             © 2026 Leaf & Loaf. All rights reserved.
           </div>
         </div>
