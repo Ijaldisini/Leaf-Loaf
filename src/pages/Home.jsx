@@ -35,6 +35,66 @@ const TypewriterText = ({ text, speed = 30 }) => {
   return <span ref={ref}>{displayedText}</span>;
 };
 
+const TypewriterJustify = ({ text, speed = 25, delay = 0 }) => {
+  const [displayedText, setDisplayedText] = useState("");
+  const [isIntersecting, setIsIntersecting] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsIntersecting(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.2 },
+    );
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!isIntersecting) return;
+
+    let i = 0;
+    let timer;
+
+    const timeout = setTimeout(() => {
+      setIsTyping(true);
+      timer = setInterval(() => {
+        setDisplayedText(text.substring(0, i));
+        i++;
+        if (i > text.length) {
+          clearInterval(timer);
+          setIsTyping(false);
+        }
+      }, speed);
+    }, delay);
+
+    return () => {
+      clearTimeout(timeout);
+      clearInterval(timer);
+    };
+  }, [isIntersecting, text, speed, delay]);
+
+  return (
+    <div className="relative w-full text-justify" ref={ref}>
+      <div className="opacity-0 pointer-events-none select-none w-full">
+        {text}
+      </div>
+
+      <div className="absolute top-0 left-0 w-full h-full text-justify">
+        {displayedText}
+        <span
+          className={`inline-block w-[2px] md:w-[3px] h-[0.8em] bg-[#ebeacb] ml-1 align-baseline transition-opacity duration-100 ${isTyping ? "animate-pulse" : "opacity-0"}`}
+        ></span>
+      </div>
+    </div>
+  );
+};
+
 const MenuCard = ({ menu, isBundling }) => {
   const videoRef = useRef(null);
   const [isHovered, setIsHovered] = useState(false);
@@ -256,46 +316,122 @@ export default function Home() {
       </nav>
 
       <HeroSection />
+
       <div className="relative z-10 bg-[#f9f8f3]">
         <section
           id="history"
-          className="relative w-full overflow-hidden bg-[#728f59]"
+          className="relative w-full min-h-screen overflow-x-hidden pt-28 md:pt-40 pb-40 md:pb-64 bg-[#092317]"
         >
-          <img
-            src="/history.png"
-            alt="Leaf & Loaf History Background"
-            className="w-full h-auto min-h-[600px] object-cover block"
-          />
-
-          <div className="absolute inset-0 flex items-start justify-center px-6 pt-80 md:pt-80 lg:pt-80 md:px-16 lg:px-24">
-            <div className="w-full max-w-7xl grid md:grid-cols-3 gap-6 lg:gap-16 items-start">
-              <div className="text-white text-left text-base md:text-lg lg:text-xl font-medium leading-relaxed drop-shadow-lg">
-                <p className="mb-4">
-                  <TypewriterText
-                    text="Leaf & Loaf was born out of a simple need: finding healthy, quick, and satisfying meals during busy university days. We realized that most fast-food options lacked nutrition, while healthy food was often too expensive or hard to find."
-                    speed={20}
-                  />
-                </p>
+          <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-24">
+            <div className="hidden md:block">
+              <div className="w-full flex justify-center mb-24">
+                <img
+                  src="/group-1-tengah-atas-layer2.png"
+                  alt="Title Ornamen"
+                  className="w-[80%] max-w-[800px] h-auto object-contain drop-shadow-2xl"
+                />
               </div>
 
-              <div className="hidden md:block"></div>
-
-              <div className="text-white text-left text-base md:text-lg lg:text-xl font-medium leading-relaxed drop-shadow-lg">
-                <p className="mb-4 mt-1 lg:mt-3">
-                  <TypewriterText
-                    text="So, we started creating our own wholesome sandwiches, packed with fresh vegetables and flavorful fillings."
-                    speed={30}
-                  />
-                </p>
-                <p>
-                  <TypewriterText
-                    text="What started as a personal quest soon became a mission to provide our fellow students with accessible, nutritious, and delicious meals that keep them energized throughout the day."
+              <div className="flex flex-row justify-between items-start w-full gap-16">
+                <div className="w-1/2 font-medium text-lg lg:text-xl leading-relaxed tracking-wide text-[#FFFFFF] drop-shadow-md">
+                  <TypewriterJustify
+                    text="Leaf & Loaf was born out of a simple need: finding healthy, quick, and satisfying meals during busy university days. We realized that most fast-food options lacked nutrition, while healthy food was often too expensive or hard to find."
                     speed={25}
+                    delay={200}
                   />
-                </p>
+                </div>
+
+                <div className="w-1/2 font-medium text-lg lg:text-xl leading-relaxed tracking-wide text-[#FFFFFF] drop-shadow-md">
+                  <TypewriterJustify
+                    text="So, we started creating our own wholesome sandwiches, packed with fresh vegetables and flavorful fillings. What started as a personal quest soon became a mission to provide our fellow students with accessible, nutritious, and delicious meals that keep them energized throughout the day."
+                    speed={25}
+                    delay={2500}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="block md:hidden">
+              <div className="w-full flex justify-center mb-10">
+                <img
+                  src="/group-1-tengah-atas-layer2.png"
+                  alt="Title Ornamen"
+                  className="w-[110%] max-w-none h-auto object-contain drop-shadow-2xl translate-y-6 -mt-12"
+                />
+              </div>
+
+              <div className="flex flex-col w-full gap-8">
+                <div className="w-full font-medium text-base leading-relaxed tracking-wide text-[#FFFFFF] drop-shadow-md">
+                  <TypewriterJustify
+                    text="Leaf & Loaf was born out of a simple need: finding healthy, quick, and satisfying meals during busy university days. We realized that most fast-food options lacked nutrition, while healthy food was often too expensive or hard to find."
+                    speed={25}
+                    delay={200}
+                  />
+                </div>
+
+                <div className="w-full font-medium text-base leading-relaxed tracking-wide text-[#FFFFFF] drop-shadow-md">
+                  <TypewriterJustify
+                    text="So, we started creating our own wholesome sandwiches, packed with fresh vegetables and flavorful fillings. What started as a personal quest soon became a mission to provide our fellow students with accessible, nutritious, and delicious meals that keep them energized throughout the day."
+                    speed={25}
+                    delay={2500}
+                  />
+                </div>
               </div>
             </div>
           </div>
+
+          <div className="hidden md:block absolute bottom-0 left-0 w-full overflow-hidden leading-none z-0 pointer-events-none">
+            <div
+              className="w-full"
+              style={{
+                animation: "sailX 35s ease-in-out infinite alternate",
+                willChange: "transform",
+              }}
+            >
+              <img
+                src="/group-2-tengah-bawah-layer2.png"
+                alt="Ornamen Ombak Desktop"
+                className="w-[210%] h-auto object-contain opacity-80 origin-bottom translate-x-1 scale-130"
+                style={{
+                  animation: "bobY 4s ease-in-out infinite alternate",
+                  willChange: "transform",
+                }}
+              />
+            </div>
+          </div>
+
+          <div className="block md:hidden absolute bottom-0 left-0 w-full overflow-hidden leading-none z-0 pointer-events-none">
+            <div
+              className="w-full"
+              style={{
+                animation: "sailX 35s ease-in-out infinite alternate",
+                willChange: "transform",
+              }}
+            >
+              <img
+                src="/group-2-tengah-bawah-layer2.png"
+                alt="Ornamen Ombak Mobile"
+                className="w-[180%] max-w-none h-auto object-contain opacity-80 origin-bottom -translate-x-75 -translate-y-4 scale-115"
+                style={{
+                  animation: "bobY 4s ease-in-out infinite alternate",
+                  willChange: "transform",
+                }}
+              />
+            </div>
+          </div>
+
+          <style>
+            {`
+              @keyframes sailX {
+                0% { transform: translateX(-8%); }
+                100% { transform: translateX(4%); }
+              }
+              @keyframes bobY {
+                0% { transform: translateY(25px); } 
+                100% { transform: translateY(20px); }
+              }
+            `}
+          </style>
         </section>
 
         <section id="products" className="py-24 px-4 max-w-6xl mx-auto">
