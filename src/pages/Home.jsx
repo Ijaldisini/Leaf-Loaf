@@ -3,39 +3,6 @@ import { Link } from "react-router-dom";
 import { supabase } from "../config/supabaseClient";
 import SplashCursor from "./SplashCursor";
 
-const TypewriterText = ({ text, speed = 30 }) => {
-  const [displayedText, setDisplayedText] = useState("");
-  const [isIntersecting, setIsIntersecting] = useState(false);
-  const ref = useRef(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsIntersecting(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.2 },
-    );
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    if (!isIntersecting) return;
-    let i = 0;
-    const timer = setInterval(() => {
-      setDisplayedText(text.substring(0, i));
-      i++;
-      if (i > text.length) clearInterval(timer);
-    }, speed);
-    return () => clearInterval(timer);
-  }, [isIntersecting, text, speed]);
-
-  return <span ref={ref}>{displayedText}</span>;
-};
-
 const TypewriterJustify = ({ text, speed = 25, delay = 0 }) => {
   const [displayedText, setDisplayedText] = useState("");
   const [isIntersecting, setIsIntersecting] = useState(false);
@@ -96,63 +63,51 @@ const TypewriterJustify = ({ text, speed = 25, delay = 0 }) => {
   );
 };
 
-const MenuCard = ({ menu, isBundling }) => {
-  const videoRef = useRef(null);
-  const [isHovered, setIsHovered] = useState(false);
+const TiltCardLink = ({ to, className, src, alt }) => {
+  const cardRef = useRef(null);
+  const [style, setStyle] = useState({});
 
-  const handleMouseEnter = () => {
-    setIsHovered(true);
-    if (videoRef.current) {
-      videoRef.current.playbackRate = 0.5;
-      videoRef.current.play();
-    }
+  const handleMouseMove = (e) => {
+    if (!cardRef.current) return;
+
+    const { left, top, width, height } =
+      cardRef.current.getBoundingClientRect();
+    const x = e.clientX - left;
+    const y = e.clientY - top;
+
+    const rotateX = ((y - height / 2) / (height / 2)) * -8;
+    const rotateY = ((x - width / 2) / (width / 2)) * 8;
+
+    setStyle({
+      transform: `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.05, 1.05, 1.05)`,
+      transition: "transform 0.1s ease-out",
+      zIndex: 50,
+    });
   };
 
   const handleMouseLeave = () => {
-    setIsHovered(false);
-    if (videoRef.current) {
-      videoRef.current.pause();
-      videoRef.current.currentTime = 0;
-    }
+    setStyle({
+      transform:
+        "perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)",
+      transition: "transform 0.4s ease-in-out",
+      zIndex: 10,
+    });
   };
 
   return (
     <Link
-      to="/checkout"
-      className="flex flex-col items-center justify-center group cursor-pointer w-full text-center"
-      onMouseEnter={handleMouseEnter}
+      to={to}
+      ref={cardRef}
+      onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
+      style={{ ...style, transformStyle: "preserve-3d" }}
+      className={`${className} rounded-3xl transition-shadow duration-300 hover:shadow-2xl hover:shadow-black/40`}
     >
-      <div className="relative w-64 h-64 mb-6 transition-transform duration-500 transform group-hover:scale-110 group-hover:-translate-y-6">
-        {isBundling && (
-          <div className="absolute -top-2 -right-2 bg-[#f4d053] text-[#2c4c44] text-xs font-black px-4 py-1 rounded-full shadow-xl z-20 rotate-12">
-            BEST DEAL
-          </div>
-        )}
-
-        <img
-          src="/sandwich-ayam.png"
-          alt={menu.name}
-          className={`absolute w-full h-full object-contain drop-shadow-2xl transition-opacity duration-500 ${isHovered ? "opacity-0" : "opacity-100"}`}
-        />
-
-        <video
-          ref={videoRef}
-          src="/sandwich-ayam.mp4"
-          muted
-          playsInline
-          className={`absolute w-full h-full object-contain drop-shadow-2xl transition-opacity duration-500 ${isHovered ? "opacity-100" : "opacity-0"}`}
-        />
-      </div>
-
-      <div className="transition-transform duration-500 group-hover:-translate-y-2">
-        <h4 className="text-3xl font-black mb-1 text-[#2c4c44] drop-shadow-sm transition-colors duration-300 group-hover:text-[#f4d053]">
-          {menu.name}
-        </h4>
-        <div className="text-xl font-bold text-[#e6e2d1] bg-[#2c4c44] px-4 py-1 rounded-full inline-block shadow-lg mt-2 group-hover:bg-[#f4d053] group-hover:text-[#2c4c44] transition-colors duration-300">
-          Rp {menu.price.toLocaleString("id-ID")}
-        </div>
-      </div>
+      <img
+        className="w-full h-full object-contain drop-shadow-xl"
+        alt={alt}
+        src={src}
+      />
     </Link>
   );
 };
@@ -264,9 +219,6 @@ export default function Home() {
       setIsSubmitting(false);
     }
   };
-
-  const menuSatuan = menus.filter((m) => m.type === "satuan");
-  const menuBundling = menus.filter((m) => m.type === "bundling");
 
   const averageRating =
     testimonials.length > 0
@@ -444,29 +396,50 @@ export default function Home() {
           </style>
         </section>
 
-        <section id="products" className="py-24 px-4 max-w-6xl mx-auto">
-          <div className="text-center mb-24 border-b-2 border-[#e6e2d1] pb-10 mt-10">
-            <h2 className="text-5xl font-black text-[#2c4c44]">Our Products</h2>
-            <p className="text-[#728f59] mt-3 text-lg font-medium">
-              Pilih sandwich sehatmu, klik untuk memesan!
-            </p>
-          </div>
+        <section
+          id="products"
+          className="bg-[#819757] w-full min-h-screen relative overflow-hidden flex items-center justify-center py-24"
+        >
+          <img
+            className="absolute bottom-[-20px] right-[-50px] md:bottom-[-50px] md:right-[-50px] w-[200px] md:w-[447px] h-auto pointer-events-none z-0"
+            alt="Decoration Right"
+            src="/vector-2-kanan-bawah-layer1.png"
+          />
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-y-20 gap-x-8 mb-16">
-            {menuSatuan.map((menu) => (
-              <MenuCard key={menu.id} menu={menu} isBundling={false} />
-            ))}
-          </div>
+          <img
+            className="absolute top-[20px] left-[-30px] md:top-[150px] md:left-[-100px] w-[150px] md:w-[415px] h-auto pointer-events-none z-0"
+            alt="Decoration Top Left"
+            src="/vector-1-kiri-atas-layer1.png"
+          />
 
-          {menuBundling.length > 0 && (
-            <div className="border-t border-[#e6e2d1] pt-24 mt-16">
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-y-20 gap-x-8">
-                {menuBundling.map((menu) => (
-                  <MenuCard key={menu.id} menu={menu} isBundling={true} />
-                ))}
-              </div>
-            </div>
-          )}
+          <img
+            className="absolute bottom-[-20px] left-[-20px] md:bottom-[-100px] md:left-0 w-[120px] md:w-[258px] h-auto pointer-events-none z-0"
+            alt="Decoration Bottom Left"
+            src="/vector-3-kiri-bawah-layer1.png"
+          />
+
+          <div className="relative z-10 w-full max-w-7xl mx-auto px-4 flex flex-col xl:flex-row items-center justify-center gap-12 lg:gap-16">
+            <TiltCardLink
+              to="/checkout"
+              className="w-[280px] sm:w-[300px] h-[380px] sm:h-[400px] z-10 cursor-pointer"
+              src="/menu-1-ayam-teriyaki.png"
+              alt="Card 1"
+            />
+
+            <TiltCardLink
+              to="/checkout"
+              className="w-[280px] sm:w-[300px] h-[380px] sm:h-[400px] z-10 cursor-pointer"
+              src="/menu-2-telur-mayo.png"
+              alt="Card 2"
+            />
+
+            <TiltCardLink
+              to="/checkout"
+              className="w-[280px] sm:w-[300px] h-[380px] sm:h-[400px] z-10 cursor-pointer"
+              src="/menu-3-bundling.png"
+              alt="Card 3"
+            />
+          </div>
         </section>
 
         <section className="bg-[#e6e2d1]/30 py-24 px-4 border-t border-[#e6e2d1]">
