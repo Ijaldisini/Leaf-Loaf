@@ -269,7 +269,7 @@ export default function Home() {
             </li>
             <li className="cursor-pointer transition">
               <a href="#contact" className="!text-[#ebeacb] hover:!text-white">
-                KONTAK
+                PROFIL
               </a>
             </li>
           </ul>
@@ -282,7 +282,7 @@ export default function Home() {
       <div className="relative z-10 bg-[#f9f8f3]">
         <section
           id="history"
-          className="relative w-full min-h-screen overflow-x-hidden pt-28 md:pt-40 pb-40 md:pb-64 bg-[#092317]"
+          className="relative w-full min-h-screen overflow-x-hidden pt-28 md:pt-40 pb-40 md:pb-64 bg-[url('/background-pasir.png')] bg-[length:auto] bg-center bg-no-repeat"
         >
           <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-24">
             <div className="hidden md:block">
@@ -373,7 +373,7 @@ export default function Home() {
               <img
                 src="/group-2-tengah-bawah-layer2.png"
                 alt="Ornamen Ombak Mobile"
-                className="w-[180%] max-w-none h-auto object-contain opacity-80 origin-bottom -translate-x-75 -translate-y-4 scale-130"
+                className="w-[190%] max-w-none h-auto object-contain opacity-80 origin-bottom -translate-x-75 -translate-y-4 scale-130"
                 style={{
                   animation: "bobY 4s ease-in-out infinite alternate",
                   willChange: "transform",
@@ -381,6 +381,18 @@ export default function Home() {
               />
             </div>
           </div>
+          
+          <img
+            src="/image-batu-kecil.png"
+            alt="Batu kecil"
+            className="absolute bottom-24 left-12 md:left-24 w-12 md:w-30 h-auto z-[2] pointer-events-none"
+          />
+
+          <img
+            src="/image-bintang-laut.png"
+            alt="Bintang laut"
+            className="absolute bottom-28 right-10 md:right-28 w-10 md:w-46 h-auto z-[2] pointer-events-none rotate-12"
+          />
 
           <style>
             {`
@@ -398,24 +410,24 @@ export default function Home() {
 
         <section
           id="products"
-          className="bg-[#0299D0] w-full min-h-screen relative overflow-hidden flex items-center justify-center py-24"
+          className="bg-[#2db8e4] w-full min-h-screen relative overflow-hidden flex items-center justify-center py-24"
         >
           <img
             className="absolute bottom-[-20px] right-[-50px] md:bottom-[-50px] md:right-[-50px] w-[200px] md:w-[447px] h-auto pointer-events-none z-0"
             alt="Decoration Right"
-            src="/vector-2-kanan-bawah-layer1.png"
+            src="/image-bunga-kuningkecoklatan.png"
           />
 
           <img
             className="absolute top-[20px] left-[-30px] md:top-[150px] md:left-[-100px] w-[150px] md:w-[415px] h-auto pointer-events-none z-0"
             alt="Decoration Top Left"
-            src="/vector-1-kiri-atas-layer1.png"
+            src="/image-bunga-pinktua.png"
           />
 
           <img
             className="absolute bottom-[-20px] left-[-20px] md:bottom-[-100px] md:left-0 w-[120px] md:w-[258px] h-auto pointer-events-none z-0"
             alt="Decoration Bottom Left"
-            src="/vector-3-kiri-bawah-layer1.png"
+            src="/image-bunga-pinktua2.png"
           />
 
           <div className="relative z-10 w-full max-w-7xl mx-auto px-4 flex flex-col xl:flex-row items-center justify-center gap-12 lg:gap-16">

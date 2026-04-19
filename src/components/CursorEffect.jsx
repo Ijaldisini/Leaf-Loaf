@@ -22,19 +22,33 @@ export default function CursorEffect() {
 
       for (let i = particles.length - 1; i >= 0; i--) {
         const p = particles[i];
+
         p.x += p.vx;
         p.y += p.vy;
         p.life -= p.decay;
+        p.size += 0.03;
 
         if (p.life <= 0) {
           particles.splice(i, 1);
           continue;
         }
 
-        const r = p.size * p.life;
         ctx.beginPath();
-        ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(74, 222, 128, ${p.life * 0.8})`;
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+
+        ctx.strokeStyle = `rgba(255,255,255,${p.life * 0.7})`;
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.arc(
+          p.x - p.size * 0.25,
+          p.y - p.size * 0.25,
+          p.size * 0.15,
+          0,
+          Math.PI * 2,
+        );
+        ctx.fillStyle = `rgba(255,255,255,${p.life * 0.35})`;
         ctx.fill();
       }
 
@@ -42,17 +56,18 @@ export default function CursorEffect() {
     }
 
     function onClick(e) {
-      for (let i = 0; i < 6; i++) {
-        const angle = Math.random() * Math.PI * 2;
-        const speed = Math.random() * 2.5 + 1;
+      for (let i = 0; i < 8; i++) {
+        const angle = Math.random() * Math.PI - Math.PI;
+        const speed = Math.random() * 1.5 + 0.5;
+
         particles.push({
           x: e.clientX,
           y: e.clientY,
-          vx: Math.cos(angle) * speed,
-          vy: Math.sin(angle) * speed,
-          size: Math.random() * 4 + 2,
+          vx: Math.cos(angle) * speed * 0.4,
+          vy: -Math.abs(Math.sin(angle) * speed) - 0.4,
+          size: Math.random() * 5 + 3,
           life: 1,
-          decay: 0.025 + Math.random() * 0.02,
+          decay: 0.015 + Math.random() * 0.01,
         });
       }
     }
