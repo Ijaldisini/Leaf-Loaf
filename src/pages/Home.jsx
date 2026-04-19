@@ -114,10 +114,10 @@ const TiltCardLink = ({ to, className, src, alt }) => {
 
 const HeroSection = () => {
   return (
-    <section className="sticky top-0 z-0 w-full h-screen bg-[#819757] overflow-hidden flex items-center justify-center">
+    <section className="sticky top-0 z-0 w-full h-screen bg-gradient-to-b from-[#3D71B6] to-[#8CDCF0] overflow-hidden flex items-center justify-center">
       <SplashCursor
         RAINBOW_MODE={false}
-        COLOR="#447A5F"
+        COLOR="#EBCBE5"
         SPLAT_RADIUS={0.5}
         SPLAT_FORCE={6000}
         DENSITY_DISSIPATION={2.0}
@@ -125,21 +125,21 @@ const HeroSection = () => {
       />
 
       <img
-        src="/vector-1-kiri-atas-layer1.png"
+        src="/image-bunga-kuningkecoklatan.png"
         alt="Decoration"
-        className="absolute top-[10%] md:top-[150px] left-[-20%] md:left-[-200px] w-[250px] md:w-[550px] h-auto pointer-events-none opacity-50 md:opacity-100 transition-all duration-300 z-10"
+        className="absolute top-[10%] md:top-[70px] left-[-20%] md:left-[-100px] w-[250px] md:w-[400px] h-auto pointer-events-none opacity-50 md:opacity-100 transition-all duration-300 z-10"
       />
 
       <img
-        src="/vector-2-kanan-bawah-layer1.png"
+        src="/image-bunga-pinktua.png"
         alt="Decoration"
-        className="absolute bottom-[-5%] md:bottom-[-10px] right-[-20%] md:right-[-50px] lg:right-[-50px] w-[300px] md:w-[607px] h-auto pointer-events-none opacity-50 md:opacity-100 transition-all duration-300 z-10"
+        className="absolute bottom-[-5%] md:bottom-[520px] right-[-20%] md:right-[-50px] lg:right-[-50px] w-[300px] md:w-[250px] h-auto pointer-events-none opacity-50 md:opacity-100 transition-all duration-300 z-10"
       />
 
       <img
-        src="/vector-3-kiri-bawah-layer1.png"
+        src="/image-bunga-pinktua2.png"
         alt="Decoration"
-        className="absolute bottom-5 left-5 md:bottom-[-100px] md:left-[173px] w-[150px] md:w-[250px] h-auto pointer-events-none opacity-50 md:opacity-100 transition-all duration-300 z-10"
+        className="absolute bottom-5 left-5 md:bottom-[-80px] md:left-[1073px] w-[150px] md:w-[250px] h-auto pointer-events-none opacity-50 md:opacity-100 transition-all duration-300 z-10"
       />
 
       <div className="relative z-20 w-[60%] sm:w-[45%] md:w-[480px] mx-auto mt-16 md:mt-0 drop-shadow-2xl animate-fade-up flex justify-center items-center pointer-events-none">
@@ -353,7 +353,7 @@ export default function Home() {
               <img
                 src="/group-2-tengah-bawah-layer2.png"
                 alt="Ornamen Ombak Desktop"
-                className="w-[210%] h-auto object-contain opacity-80 origin-bottom translate-x-1 scale-130"
+                className="w-[220%] h-auto object-contain opacity-80 origin-bottom translate-x-1 translate-y-0.5 scale-135"
                 style={{
                   animation: "bobY 4s ease-in-out infinite alternate",
                   willChange: "transform",
@@ -373,7 +373,7 @@ export default function Home() {
               <img
                 src="/group-2-tengah-bawah-layer2.png"
                 alt="Ornamen Ombak Mobile"
-                className="w-[180%] max-w-none h-auto object-contain opacity-80 origin-bottom -translate-x-75 -translate-y-4 scale-115"
+                className="w-[180%] max-w-none h-auto object-contain opacity-80 origin-bottom -translate-x-75 -translate-y-4 scale-130"
                 style={{
                   animation: "bobY 4s ease-in-out infinite alternate",
                   willChange: "transform",
@@ -398,7 +398,7 @@ export default function Home() {
 
         <section
           id="products"
-          className="bg-[#819757] w-full min-h-screen relative overflow-hidden flex items-center justify-center py-24"
+          className="bg-[#0299D0] w-full min-h-screen relative overflow-hidden flex items-center justify-center py-24"
         >
           <img
             className="absolute bottom-[-20px] right-[-50px] md:bottom-[-50px] md:right-[-50px] w-[200px] md:w-[447px] h-auto pointer-events-none z-0"
