@@ -307,17 +307,17 @@ export default function Home() {
           <ul className="flex justify-center md:justify-between items-center gap-8 md:gap-16 font-bold tracking-widest text-sm mb-3 drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">
             <li className="cursor-pointer transition">
               <a href="#" className="!text-[#ebeacb] hover:!text-white">
-                HOME
+                BERANDA
               </a>
             </li>
             <li className="cursor-pointer transition">
               <a href="#products" className="!text-[#ebeacb] hover:!text-white">
-                OUR PRODUCTS
+                PRODUK
               </a>
             </li>
             <li className="cursor-pointer transition">
               <a href="#contact" className="!text-[#ebeacb] hover:!text-white">
-                CONTACT
+                KONTAK
               </a>
             </li>
           </ul>
