@@ -413,7 +413,7 @@ export default function Home() {
           className="bg-[#2db8e4] w-full min-h-screen relative overflow-hidden flex items-center justify-center py-24"
         >
           <img
-            className="absolute bottom-[-20px] right-[-50px] md:bottom-[-50px] md:right-[-50px] w-[200px] md:w-[447px] h-auto pointer-events-none z-0"
+            className="absolute bottom-[20px] right-[-50px] md:bottom-[-1px] md:right-[-50px] w-[200px] md:w-[447px] h-auto pointer-events-none z-0"
             alt="Decoration Right"
             src="/image-bunga-kuningkecoklatan.png"
           />
@@ -425,7 +425,7 @@ export default function Home() {
           />
 
           <img
-            className="absolute bottom-[-20px] left-[-20px] md:bottom-[-100px] md:left-0 w-[120px] md:w-[258px] h-auto pointer-events-none z-0"
+            className="absolute bottom-[10px] left-[-20px] md:bottom-[10px] md:left-100 w-[120px] md:w-[258px] h-auto pointer-events-none z-0"
             alt="Decoration Bottom Left"
             src="/image-bunga-pinktua2.png"
           />
