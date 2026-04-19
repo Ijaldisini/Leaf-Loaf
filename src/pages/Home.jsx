@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "../config/supabaseClient";
+import SplashCursor from "./SplashCursor";
 
 const TypewriterText = ({ text, speed = 30 }) => {
   const [displayedText, setDisplayedText] = useState("");
@@ -159,25 +160,34 @@ const MenuCard = ({ menu, isBundling }) => {
 const HeroSection = () => {
   return (
     <section className="sticky top-0 z-0 w-full h-screen bg-[#819757] overflow-hidden flex items-center justify-center">
+      <SplashCursor
+        RAINBOW_MODE={false}
+        COLOR="#447A5F"
+        SPLAT_RADIUS={0.5}
+        SPLAT_FORCE={6000}
+        DENSITY_DISSIPATION={2.0}
+        VELOCITY_DISSIPATION={1.5}
+      />
+
       <img
         src="/vector-1-kiri-atas-layer1.png"
         alt="Decoration"
-        className="absolute top-[10%] md:top-[150px] left-[-20%] md:left-[-200px] w-[250px] md:w-[550px] h-auto pointer-events-none opacity-50 md:opacity-100 transition-all duration-300"
+        className="absolute top-[10%] md:top-[150px] left-[-20%] md:left-[-200px] w-[250px] md:w-[550px] h-auto pointer-events-none opacity-50 md:opacity-100 transition-all duration-300 z-10"
       />
 
       <img
         src="/vector-2-kanan-bawah-layer1.png"
         alt="Decoration"
-        className="absolute bottom-[-5%] md:bottom-[-10px] right-[-20%] md:right-[-50px] lg:right-[-50px] w-[300px] md:w-[607px] h-auto pointer-events-none opacity-50 md:opacity-100 transition-all duration-300"
+        className="absolute bottom-[-5%] md:bottom-[-10px] right-[-20%] md:right-[-50px] lg:right-[-50px] w-[300px] md:w-[607px] h-auto pointer-events-none opacity-50 md:opacity-100 transition-all duration-300 z-10"
       />
 
       <img
         src="/vector-3-kiri-bawah-layer1.png"
         alt="Decoration"
-        className="absolute bottom-5 left-5 md:bottom-[-100px] md:left-[173px] w-[150px] md:w-[250px] h-auto pointer-events-none opacity-50 md:opacity-100 transition-all duration-300"
+        className="absolute bottom-5 left-5 md:bottom-[-100px] md:left-[173px] w-[150px] md:w-[250px] h-auto pointer-events-none opacity-50 md:opacity-100 transition-all duration-300 z-10"
       />
 
-      <div className="relative z-10 w-[60%] sm:w-[45%] md:w-[480px] mx-auto mt-16 md:mt-0 drop-shadow-2xl animate-fade-up flex justify-center items-center">
+      <div className="relative z-20 w-[60%] sm:w-[45%] md:w-[480px] mx-auto mt-16 md:mt-0 drop-shadow-2xl animate-fade-up flex justify-center items-center pointer-events-none">
         <img
           src="/logo-hd.png"
           alt="Hero Leaf and Loaf"
