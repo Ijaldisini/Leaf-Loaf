@@ -178,7 +178,7 @@ export default function Home() {
       .from("batches")
       .select("id")
       .eq("status", "open")
-      .single();
+      .maybeSingle();
 
     if (menuData) setMenus(menuData);
     if (testimonialData) setTestimonials(testimonialData);
@@ -268,7 +268,7 @@ export default function Home() {
               </a>
             </li>
             <li className="cursor-pointer transition">
-              <a href="#contact" className="!text-[#ebeacb] hover:!text-white">
+              <a href="#" className="!text-[#ebeacb] hover:!text-white">
                 PROFIL
               </a>
             </li>
@@ -381,17 +381,17 @@ export default function Home() {
               />
             </div>
           </div>
-          
+
           <img
             src="/image-batu-kecil.png"
             alt="Batu kecil"
-            className="absolute bottom-24 left-12 md:left-24 w-12 md:w-30 h-auto z-[2] pointer-events-none"
+            className="absolute bottom-24 left-12 md:left-24 w-12 md:w-[120px] h-auto z-[2] pointer-events-none"
           />
 
           <img
             src="/image-bintang-laut.png"
             alt="Bintang laut"
-            className="absolute bottom-28 right-10 md:right-28 w-10 md:w-46 h-auto z-[2] pointer-events-none rotate-12"
+            className="absolute bottom-28 right-10 md:right-28 w-10 md:w-[184px] h-auto z-[2] pointer-events-none rotate-12"
           />
 
           <style>
@@ -430,6 +430,30 @@ export default function Home() {
             src="/image-bunga-pinktua2.png"
           />
 
+          <img
+            className="absolute bottom-[1010px] left-[10px] md:bottom-[650px] md:left-100 w-[50px] md:w-[70px] h-auto pointer-events-none z-0 opacity-70"
+            alt="bubble atas"
+            src="/image-gelembung-putih.png"
+          />
+
+          <img
+            className="absolute bottom-[900px] left-[330px] md:bottom-[500px] md:left-350 w-[50px] md:w-[70px] h-auto pointer-events-none z-0 opacity-70"
+            alt="bubble atas"
+            src="/image-gelembung-putih.png"
+          />
+
+          <img
+            className="absolute bottom-[450px] left-[305px] md:bottom-[350px] md:left-140 w-[50px] md:w-[70px] h-auto pointer-events-none z-0 opacity-70"
+            alt="bubble atas"
+            src="/image-gelembung-putih.png"
+          />
+
+          <img
+            className="absolute bottom-[150px] left-[-18px] md:bottom-[150px] md:left-240 w-[50px] md:w-[70px] h-auto pointer-events-none z-0 opacity-70"
+            alt="bubble atas"
+            src="/image-gelembung-putih.png"
+          />
+
           <div className="relative z-10 w-full max-w-7xl mx-auto px-4 flex flex-col xl:flex-row items-center justify-center gap-12 lg:gap-16">
             <TiltCardLink
               to="/checkout"
@@ -454,148 +478,203 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="bg-[#e6e2d1]/30 py-24 px-4 border-t border-[#e6e2d1]">
-          <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-16 pb-10 border-b-2 border-[#e6e2d1] flex flex-col items-center">
-              <h2 className="text-4xl font-black text-[#2c4c44] mb-4">
-                Apa Kata Mereka?
-              </h2>
-              {testimonials.length > 0 && (
-                <div className="flex items-center gap-3 bg-white px-6 py-3 rounded-full shadow-sm border border-[#e6e2d1]">
-                  <span className="text-3xl font-black text-[#2c4c44]">
-                    {averageRating}
-                  </span>
-                  <div className="flex gap-1">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <svg
-                        key={star}
-                        className={`w-8 h-8 ${star <= Math.round(averageRating) ? "text-[#f4d053]" : "text-gray-300"}`}
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                      >
-                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                      </svg>
-                    ))}
-                  </div>
-                  <span className="text-gray-500 font-medium">
-                    ({testimonials.length} Ulasan)
-                  </span>
-                </div>
-              )}
-            </div>
+        <section
+          id="testimoni"
+          className="relative w-full min-h-screen bg-[#2db8e4] py-16 md:py-24 overflow-hidden flex items-center"
+        >
+          <img
+            className="absolute inset-0 w-full h-full object-cover select-none pointer-events-none z-0"
+            alt="Underwater background"
+            src="/image-ladang.png"
+          />
 
-            {testimonials.length > 0 ? (
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-                {testimonials.map((testi) => (
-                  <div
-                    key={testi.id}
-                    className="bg-white p-7 rounded-3xl shadow-sm relative group hover:shadow-xl hover:border-[#f4d053] border border-[#e6e2d1] transition-all"
-                  >
-                    <div className="mb-4">{renderStars(testi.rating || 5)}</div>
-                    <p className="text-gray-700 italic mb-6 leading-relaxed relative z-10 text-lg">
-                      "{testi.content}"
-                    </p>
-                    <div className="flex justify-between items-center relative z-10 mt-auto pt-4 border-t border-gray-100 group-hover:border-[#e6e2d1] transition-colors">
-                      <div className="font-bold text-[#2c4c44]">
-                        {testi.customer_name}
-                      </div>
-                      <div className="text-xs text-[#728f59] bg-[#728f59]/10 px-3 py-1 rounded-full font-bold">
-                        Batch {testi.batches?.name || "Lalu"}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center bg-white p-10 rounded-3xl shadow-sm mb-16 text-gray-500 italic text-lg border border-[#e6e2d1]">
-                Belum ada testimoni.
-              </div>
-            )}
+          <img
+            className="absolute bottom-0 left-0 w-full h-[30%] md:h-[40%] object-cover object-top select-none pointer-events-none z-0"
+            alt="Sand bottom"
+            src="/image-gradasi-to-footer.png"
+          />
 
-            <div className="max-w-xl mx-auto mt-20 bg-white p-8 md:p-10 rounded-3xl shadow-xl border-2 border-[#f4d053] transform relative overflow-hidden">
-              <div className="absolute top-0 left-0 w-full h-3 bg-[#f4d053]"></div>
-              <h3 className="text-3xl font-black text-[#2c4c44] mb-2">
-                Kasih Rating Dong!
-              </h3>
-              <p className="text-gray-600 mb-8 text-lg">
-                Pilih bintangmu dan ceritakan pengalaman makan Sandwich Leaf &
-                Loaf!
-              </p>
-              <form onSubmit={handleSubmitTestimonial} className="space-y-6">
-                <div>
-                  <label className="block text-sm font-bold text-[#2c4c44] mb-2 leading-tight">
-                    Rating Bintang <span className="text-red-500">*</span>
-                  </label>
-                  <div className="flex gap-2">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <button
-                        key={star}
-                        type="button"
-                        onClick={() => setNewTestiRating(star)}
-                        className="focus:outline-none transition-transform hover:scale-110"
-                      >
+          <img
+            className="absolute w-[20%] md:w-[8%] min-w-[60px] h-auto top-[48%] md:top-[45%] right-[1%] select-none pointer-events-none z-10 opacity-90 md:opacity-100"
+            alt="Decoration Top Right"
+            src="/image-ubur-ubur.png"
+          />
+          <img
+            className="absolute w-[25%] md:w-[14%] min-w-[100px] h-auto bottom-0 right-[-5%] md:right-[5%] select-none pointer-events-none z-10 opacity-60 md:opacity-100"
+            alt="Decoration Bottom Right"
+            src="/image-group-gelembung.png"
+          />
+          <img
+            className="hidden md:block absolute w-[10%] min-w-[150px] h-auto bottom-[170px] right-[45%] select-none pointer-events-none z-10"
+            alt="Decoration Bottom Center"
+            src="/image-group-gelembung.png"
+          />
+          <img
+            className="absolute w-[25%] md:w-[18%] min-w-[100px] md:min-w-[150px] h-auto bottom-[50px] md:bottom-[280px] left-[-5%] md:left-[-2%] select-none pointer-events-none z-10 opacity-60 md:opacity-100"
+            alt="Decoration Bottom Left"
+            src="/image-group-gelembung.png"
+          />
+
+          <div className="max-w-7xl mx-auto px-4 relative z-20 flex flex-col lg:flex-row gap-12 lg:gap-16 w-full">
+            <div className="lg:w-1/2 flex flex-col pt-4 md:pt-0">
+              <div className="mb-8 text-center lg:text-left">
+                <h2 className="text-4xl md:text-5xl font-black text-white drop-shadow-lg mb-4">
+                  Apa Kata Mereka?
+                </h2>
+
+                {testimonials.length > 0 && (
+                  <div className="inline-flex items-center gap-3 bg-white/20 backdrop-blur-md px-6 py-3 rounded-full shadow-lg border border-white/30">
+                    <span className="text-2xl md:text-3xl font-black text-white drop-shadow-md">
+                      {averageRating}
+                    </span>
+                    <div className="flex gap-1">
+                      {[1, 2, 3, 4, 5].map((star) => (
                         <svg
-                          className={`w-10 h-10 transition-colors ${star <= newTestiRating ? "text-[#f4d053]" : "text-gray-200 hover:text-[#f4d053]/50"}`}
+                          key={star}
+                          className={`w-6 h-6 md:w-8 md:h-8 drop-shadow-md ${star <= Math.round(averageRating) ? "text-[#f4d053]" : "text-gray-300/50"}`}
                           fill="currentColor"
                           viewBox="0 0 20 20"
                         >
                           <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                         </svg>
-                      </button>
+                      ))}
+                    </div>
+                    <span className="text-white font-medium text-sm md:text-base drop-shadow-md">
+                      ({testimonials.length} Ulasan)
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              <div className="relative flex-1 min-h-[350px] md:min-h-[400px] max-h-[400px] md:max-h-[500px] overflow-hidden rounded-[2rem] border border-white/20 bg-white/30 backdrop-blur-md p-4 shadow-2xl">
+
+                {testimonials.length > 0 ? (
+                  <div className="animate-marquee-vertical flex flex-col gap-4 pt-8 pb-8 hover:[animation-play-state:paused]">
+                    {testimonials.map((testi) => (
+                      <div
+                        key={testi.id}
+                        className="bg-white/20 backdrop-blur-md p-5 md:p-6 rounded-2xl shadow-lg border border-white/20"
+                      >
+                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-2 gap-2 sm:gap-0">
+                          <div>
+                            <div className="font-bold text-[#2db8e4] text-base md:text-lg">
+                              {testi.customer_name}
+                            </div>
+                            <div className="text-[10px] md:text-xs text-[#2db8e4]/80 bg-[#2db8e4]/10 px-3 py-1 rounded-full font-bold w-max mt-1">
+                              Batch {testi.batches?.name || "Lalu"}
+                            </div>
+                          </div>
+                          <div className="flex">
+                            {renderStars(testi.rating || 5)}
+                          </div>
+                        </div>
+                        <p className="text-gray-700 italic mt-2 md:mt-3 text-sm md:text-base leading-relaxed">
+                          "{testi.content}"
+                        </p>
+                      </div>
                     ))}
                   </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-bold text-[#2c4c44] mb-1 leading-tight">
-                    Nama Kamu <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    value={newTestiName}
-                    onChange={(e) => setNewTestiName(e.target.value)}
-                    required
-                    placeholder="Contoh: Rina Jember"
-                    className="w-full border-2 border-[#e6e2d1] p-3 rounded-xl focus:border-[#f4d053] focus:ring-0 transition outline-none"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-bold text-[#2c4c44] mb-1 leading-tight">
-                    Isi Testimoni <span className="text-red-500">*</span>
-                  </label>
-                  <textarea
-                    value={newTestiContent}
-                    onChange={(e) => setNewTestiContent(e.target.value)}
-                    required
-                    placeholder="Tuliskan jujur ya..."
-                    rows="4"
-                    className="w-full border-2 border-[#e6e2d1] p-3 rounded-xl focus:border-[#f4d053] focus:ring-0 transition outline-none"
-                  ></textarea>
-                </div>
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full bg-[#2c4c44] text-[#e6e2d1] font-black py-4 rounded-xl text-lg hover:bg-[#1f3630] transition shadow-lg transform hover:-translate-y-1 disabled:bg-gray-400 disabled:text-gray-200"
+                ) : (
+                  <div className="flex items-center justify-center h-full text-white/80 italic font-medium text-lg">
+                    Belum ada testimoni.
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="lg:w-1/2 flex items-center justify-center mt-8 lg:mt-0 z-20 pb-10 md:pb-0">
+              <div className="bg-black/35 backdrop-blur-xl p-6 md:p-10 rounded-[2rem] md:rounded-[2.5rem] shadow-2xl w-full max-w-xl border border-white/20 relative overflow-hidden">
+
+                <h3 className="text-2xl md:text-3xl font-black text-[#2db8e4] mb-2 mt-2">
+                  Kasih Rating Dong!
+                </h3>
+                <p className="text-white mb-6 md:mb-8 text-sm md:text-lg">
+                  Pilih bintangmu dan ceritakan pengalaman makan Sandwich Leaf n
+                  Loaff!
+                </p>
+
+                <form
+                  onSubmit={handleSubmitTestimonial}
+                  className="space-y-4 md:space-y-6"
                 >
-                  {isSubmitting
-                    ? "Sedang Mengirim..."
-                    : "Kirim Rating Saya! 🚀"}
-                </button>
-              </form>
+                  <div>
+                    <label className="block text-xs md:text-sm font-bold text-[#2db8e4] mb-2 leading-tight">
+                      Rating Bintang <span className="text-red-500">*</span>
+                    </label>
+                    <div className="flex gap-1 md:gap-2">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                          type="button"
+                          key={star}
+                          onClick={() => setNewTestiRating(star)}
+                          className="focus:outline-none transition-transform hover:scale-110"
+                        >
+                          <svg
+                            className={`w-8 h-8 md:w-10 md:h-10 transition-colors ${star <= newTestiRating ? "text-[#f4d053] drop-shadow-md" : "text-gray-300 hover:text-[#f4d053]/50"}`}
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                          >
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                          </svg>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs md:text-sm font-bold text-[#2db8e4] mb-1 leading-tight">
+                      Nama Kamu <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={newTestiName}
+                      onChange={(e) => setNewTestiName(e.target.value)}
+                      required
+                      placeholder="Contoh: Radit Ganteng"
+                      className="w-full border-2 border-gray-200 p-3 rounded-xl focus:border-[#2db8e4] focus:ring-0 transition outline-none bg-white text-sm md:text-base"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs md:text-sm font-bold text-[#2db8e4] mb-1 leading-tight">
+                      Isi Testimoni <span className="text-red-500">*</span>
+                    </label>
+                    <textarea
+                      value={newTestiContent}
+                      onChange={(e) => setNewTestiContent(e.target.value)}
+                      required
+                      placeholder="BUHHHH MANTAP EUYYYY"
+                      rows="3"
+                      className="w-full border-2 border-gray-200 p-3 rounded-xl focus:border-[#2db8e4] focus:ring-0 transition outline-none bg-white text-sm md:text-base"
+                    ></textarea>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full bg-[#2db8e4] text-white font-black py-3 md:py-4 rounded-xl text-base md:text-lg hover:bg-[#1a9ac2] transition shadow-lg transform hover:-translate-y-1 disabled:bg-gray-400 disabled:text-gray-200"
+                  >
+                    {isSubmitting
+                      ? "Sedang Mengirim..."
+                      : "Kirim Rating Saya! 🚀"}
+                  </button>
+                </form>
+              </div>
             </div>
           </div>
         </section>
 
         <footer
           id="contact"
-          className="bg-[#2c4c44] text-[#e6e2d1] py-12 text-center"
+          className="bg-black text-[#f1a0aa] py-12 text-center"
         >
           <div className="max-w-6xl mx-auto px-4">
-            <p className="font-black text-2xl mb-2">🍃 Leaf & Loaf</p>
+            <p className="font-black text-2xl mb-2">Leaf n Loaff</p>
             <p className="text-sm opacity-80">
-              Healthy Sandwich for University Students Jember Area.
+              Sandwich Sehat Berasal dari Universitas jember.
             </p>
-            <div className="text-xs opacity-60 mt-8 pt-8 border-t border-[#728f59]">
-              © 2026 Leaf & Loaf. All rights reserved.
+            <div className="text-xs opacity-60 mt-8 pt-8 border-t border-[#f1a0aa]">
+              © 2026 Leaf n Loaff. All rights reserved.
             </div>
           </div>
         </footer>
