@@ -1,0 +1,233 @@
+@import "tailwindcss";
+
+/* ===== UNDERWATER DESIGN TOKENS ===== */
+:root {
+  --ocean-50: #eefcff;
+  --ocean-100: #d8f6ff;
+  --ocean-200: #bcecff;
+  --ocean-300: #8cdcf0;
+  --ocean-400: #57c7ea;
+  --ocean-500: #2db8e4;
+  --ocean-600: #3d71b6;
+  --ocean-700: #295792;
+  --ocean-800: #183f6c;
+  --ocean-900: #0b2748;
+
+  --deep-sea: #041a2f;
+  --reef: #0a2842;
+  --lagoon: #10395f;
+
+  --sand: #ebeacb;
+  --coral: #f1a0aa;
+  --gold: #f4d053;
+
+  --bg-body: linear-gradient(to bottom, #3D71B6, #8CDCF0);
+  --bg-glass: rgba(255, 255, 255, 0.12);
+  --border-glass: rgba(255, 255, 255, 0.18);
+
+  --text-primary: #ffffff;
+  --text-secondary: #d8f6ff;
+  --text-muted: rgba(255,255,255,0.7);
+
+  --shadow-glow: 0 0 25px rgba(140, 220, 240, 0.25);
+  --shadow-card: 0 10px 35px rgba(0, 0, 0, 0.25);
+
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ===== RESET ===== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg-body);
+  color: var(--text-primary);
+  overflow-x: hidden;
+}
+
+/* ===== FLOATING BUBBLES ===== */
+.leaf-deco {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0.18;
+  font-size: 60px;
+  animation: bubbleFloat 8s ease-in-out infinite;
+  z-index: 0;
+}
+
+@keyframes bubbleFloat {
+  0% {
+    transform: translateY(20px) scale(1);
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.25;
+  }
+  100% {
+    transform: translateY(-120px) scale(1.2);
+    opacity: 0;
+  }
+}
+
+/* ===== GLASS ===== */
+.glass {
+  background: var(--bg-glass);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid var(--border-glass);
+  border-radius: 22px;
+}
+
+.glass-card {
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 28px;
+  box-shadow: var(--shadow-card);
+  transition: all 0.35s var(--ease-smooth);
+}
+
+.glass-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.35), var(--shadow-glow);
+}
+
+/* ===== BADGES ===== */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.badge-blue {
+  background: rgba(45, 184, 228, 0.18);
+  color: var(--ocean-100);
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+.badge-gold {
+  background: rgba(244, 208, 83, 0.18);
+  color: var(--gold);
+  border: 1px solid rgba(244,208,83,0.25);
+}
+
+.badge-coral {
+  background: rgba(241, 160, 170, 0.18);
+  color: var(--coral);
+  border: 1px solid rgba(241,160,170,0.25);
+}
+
+/* ===== PULSE DOT ===== */
+.pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ocean-300);
+  box-shadow: 0 0 12px var(--ocean-300);
+  animation: pulseOcean 2s infinite;
+}
+
+@keyframes pulseOcean {
+  0%,100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 0.5;
+  }
+}
+
+/* ===== BUTTON ===== */
+.btn-3d {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 28px;
+  border: none;
+  border-radius: 18px;
+  font-weight: 700;
+  color: white;
+  cursor: pointer;
+  background: linear-gradient(135deg, #2db8e4, #3d71b6);
+  box-shadow:
+    0 6px 0 #1f4e80,
+    0 10px 25px rgba(0,0,0,0.25);
+  transition: all 0.3s ease;
+}
+
+.btn-3d:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 9px 0 #1f4e80,
+    0 14px 30px rgba(0,0,0,0.35),
+    0 0 25px rgba(140,220,240,0.35);
+}
+
+.btn-3d:active {
+  transform: translateY(2px);
+}
+
+/* ===== INPUT ===== */
+.input-glass {
+  width: 100%;
+  padding: 14px 18px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 16px;
+  color: white;
+  outline: none;
+  transition: 0.3s;
+}
+
+.input-glass::placeholder {
+  color: rgba(255,255,255,0.6);
+}
+
+.input-glass:focus {
+  border-color: var(--ocean-300);
+  box-shadow: 0 0 0 3px rgba(140,220,240,0.18);
+}
+
+/* ===== TABLE ===== */
+.table-glass {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-glass thead th {
+  padding: 14px;
+  color: var(--sand);
+  background: rgba(255,255,255,0.06);
+}
+
+.table-glass tbody td {
+  padding: 14px;
+  color: white;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.table-glass tbody tr:hover {
+  background: rgba(255,255,255,0.04);
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, #8CDCF0, #3D71B6);
+  border-radius: 999px;
+}

@@ -247,8 +247,8 @@ export default function Home() {
 
   if (isLoading)
     return (
-      <div className="min-h-screen flex items-center justify-center text-xl font-bold text-[#728f59] bg-[#f9f8f3]">
-        Memuat Leaf & Loaf...
+      <div className="min-h-screen flex items-center justify-center text-xl font-bold text-[#728f59] bg-[#2db8e4]">
+        <img src="logo-hd.png" alt="Leaf n Loaff" className="max-w-[200px] h-auto" />
       </div>
     );
 
