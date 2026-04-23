@@ -248,7 +248,11 @@ export default function Home() {
   if (isLoading)
     return (
       <div className="min-h-screen flex items-center justify-center text-xl font-bold text-[#728f59] bg-[#2db8e4]">
-        <img src="logo-hd.png" alt="Leaf n Loaff" className="max-w-[200px] h-auto" />
+        <img
+          src="logo-hd.png"
+          alt="Leaf n Loaff"
+          className="max-w-[200px] h-auto"
+        />
       </div>
     );
 
@@ -547,12 +551,17 @@ export default function Home() {
               </div>
 
               <div className="relative flex-1 min-h-[350px] md:min-h-[400px] max-h-[400px] md:max-h-[500px] overflow-hidden rounded-[2rem] border border-white/20 bg-white/30 backdrop-blur-md p-4 shadow-2xl">
-
                 {testimonials.length > 0 ? (
-                  <div className="animate-marquee-vertical flex flex-col gap-4 pt-8 pb-8 hover:[animation-play-state:paused]">
-                    {testimonials.map((testi) => (
+                  <div
+                    className={`flex flex-col gap-4 ${
+                      testimonials.length > 3
+                        ? "animate-testimonial-scroll"
+                        : ""
+                    } hover:[animation-play-state:paused]`}
+                  >
+                    {[...testimonials, ...testimonials].map((testi, index) => (
                       <div
-                        key={testi.id}
+                        key={`${testi.id}-${index}`}
                         className="bg-white/20 backdrop-blur-md p-5 md:p-6 rounded-2xl shadow-lg border border-white/20"
                       >
                         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-2 gap-2 sm:gap-0">
@@ -568,6 +577,7 @@ export default function Home() {
                             {renderStars(testi.rating || 5)}
                           </div>
                         </div>
+
                         <p className="text-gray-700 italic mt-2 md:mt-3 text-sm md:text-base leading-relaxed">
                           "{testi.content}"
                         </p>
@@ -584,7 +594,6 @@ export default function Home() {
 
             <div className="lg:w-1/2 flex items-center justify-center mt-8 lg:mt-0 z-20 pb-10 md:pb-0">
               <div className="bg-black/35 backdrop-blur-xl p-6 md:p-10 rounded-[2rem] md:rounded-[2.5rem] shadow-2xl w-full max-w-xl border border-white/20 relative overflow-hidden">
-
                 <h3 className="text-2xl md:text-3xl font-black text-[#2db8e4] mb-2 mt-2">
                   Kasih Rating Dong!
                 </h3>
@@ -656,7 +665,7 @@ export default function Home() {
                   >
                     {isSubmitting
                       ? "Sedang Mengirim..."
-                      : "Kirim Rating Saya! 🚀"}
+                      : "Kirim Rating!"}
                   </button>
                 </form>
               </div>

@@ -84,3 +84,16 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(to bottom, #a6eaff, #2b5f99);
 }
+
+@keyframes testimonialScroll {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-50%);
+  }
+}
+
+.animate-testimonial-scroll {
+  animation: testimonialScroll 18s linear infinite;
+}
