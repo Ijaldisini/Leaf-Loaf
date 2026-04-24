@@ -272,7 +272,7 @@ export default function Home() {
               </a>
             </li>
             <li className="cursor-pointer transition">
-              <a href="#" className="!text-[#ebeacb] hover:!text-white">
+              <a href="/profile" className="!text-[#ebeacb] hover:!text-white">
                 PROFIL
               </a>
             </li>
@@ -674,7 +674,7 @@ export default function Home() {
         </section>
 
         <footer
-          id="contact"
+          id="footer"
           className="bg-black text-[#f1a0aa] py-12 text-center"
         >
           <div className="max-w-6xl mx-auto px-4">
