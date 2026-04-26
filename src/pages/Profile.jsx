@@ -112,7 +112,7 @@ const Profile = () => {
           src="/image-bunga-pinktua.png"
         />
         <img
-          className="absolute bottom-[25px] right-[45px] w-[40px] md:w-[280px] scale-125 md:scale-45 object-contain pointer-events-none z-10"
+          className="absolute bottom-[25px] md:bottom-[-81px] right-[45px] md:right-86 w-[40px] md:w-[280px] scale-125 md:scale-55 object-contain pointer-events-none z-10"
           alt="Ornament Bottom Right"
           src="/image-batu-rumput.png"
         />
