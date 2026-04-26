@@ -301,7 +301,7 @@ export default function Home() {
               <div className="flex flex-row justify-between items-start w-full gap-16">
                 <div className="w-1/2 font-medium text-lg lg:text-xl leading-relaxed tracking-wide text-[#FFFFFF] drop-shadow-md">
                   <TypewriterJustify
-                    text="Leaf & Loaf was born out of a simple need: finding healthy, quick, and satisfying meals during busy university days. We realized that most fast-food options lacked nutrition, while healthy food was often too expensive or hard to find."
+                    text="Leaf n Loaff was born from a very real struggle: Kita sering susah nemuin makanan yang healthy, cepat, tapi tetap enak di tengah hectic-nya kehidupan kampus. Karena kebanyakan fast food mengandung nutrisi yang sedikit, sementara makanan sehat sering kali terasa pricey atau susah dicari. Dari situlah kami perkenalkan Leaf n Loaff sebagai sandwich yang praktis dengan isian fresh veggies, flavorful fillings."
                     speed={25}
                     delay={200}
                   />
@@ -309,7 +309,7 @@ export default function Home() {
 
                 <div className="w-1/2 font-medium text-lg lg:text-xl leading-relaxed tracking-wide text-[#FFFFFF] drop-shadow-md">
                   <TypewriterJustify
-                    text="So, we started creating our own wholesome sandwiches, packed with fresh vegetables and flavorful fillings. What started as a personal quest soon became a mission to provide our fellow students with accessible, nutritious, and delicious meals that keep them energized throughout the day."
+                    text="What started as a simple need slowly turned into something bigger. Leaf n Loaff hadir untuk memberi kamu pilihan makanan yang lebih sehat, lebih simple, dan tetap satisfying tanpa harus ribet atau overbudget. Because eating better shouldn’t be complicated, it should fit your pace, your lifestyle, and your everyday moments."
                     speed={25}
                     delay={2500}
                   />
@@ -329,7 +329,7 @@ export default function Home() {
               <div className="flex flex-col w-full gap-8">
                 <div className="w-full font-medium text-base leading-relaxed tracking-wide text-[#FFFFFF] drop-shadow-md">
                   <TypewriterJustify
-                    text="Leaf & Loaf was born out of a simple need: finding healthy, quick, and satisfying meals during busy university days. We realized that most fast-food options lacked nutrition, while healthy food was often too expensive or hard to find."
+                    text="Leaf n Loaff was born from a very real struggle: Kita sering susah nemuin makanan yang healthy, cepat, tapi tetap enak di tengah hectic-nya kehidupan kampus. Karena kebanyakan fast food mengandung nutrisi yang sedikit, sementara makanan sehat sering kali terasa pricey atau susah dicari. Dari situlah kami perkenalkan Leaf n Loaff sebagai sandwich yang praktis dengan isian fresh veggies, flavorful fillings."
                     speed={25}
                     delay={200}
                   />
@@ -337,7 +337,7 @@ export default function Home() {
 
                 <div className="w-full font-medium text-base leading-relaxed tracking-wide text-[#FFFFFF] drop-shadow-md">
                   <TypewriterJustify
-                    text="So, we started creating our own wholesome sandwiches, packed with fresh vegetables and flavorful fillings. What started as a personal quest soon became a mission to provide our fellow students with accessible, nutritious, and delicious meals that keep them energized throughout the day."
+                    text="What started as a simple need slowly turned into something bigger. Leaf n Loaff hadir untuk memberi kamu pilihan makanan yang lebih sehat, lebih simple, dan tetap satisfying tanpa harus ribet atau overbudget. Because eating better shouldn’t be complicated, it should fit your pace, your lifestyle, and your everyday moments."
                     speed={25}
                     delay={2500}
                   />
