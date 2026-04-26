@@ -87,10 +87,10 @@ const Profile = () => {
               </li>
               <li className="cursor-pointer transition">
                 <a
-                  href="/#products"
+                  href="/checkout"
                   className="!text-[#ebeacb] hover:!text-white"
                 >
-                  PRODUK
+                  PESAN
                 </a>
               </li>
               <li className="cursor-pointer transition">

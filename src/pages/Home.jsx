@@ -262,13 +262,13 @@ export default function Home() {
         <div className="max-w-5xl mx-auto px-6 flex flex-col pointer-events-auto">
           <ul className="flex justify-center md:justify-between items-center gap-8 md:gap-16 font-bold tracking-widest text-sm mb-3 drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">
             <li className="cursor-pointer transition">
-              <a href="#" className="!text-[#ebeacb] hover:!text-white">
+              <a href="/" className="!text-[#ebeacb] hover:!text-white">
                 BERANDA
               </a>
             </li>
             <li className="cursor-pointer transition">
-              <a href="#products" className="!text-[#ebeacb] hover:!text-white">
-                PRODUK
+              <a href="/checkout" className="!text-[#ebeacb] hover:!text-white">
+                PESAN
               </a>
             </li>
             <li className="cursor-pointer transition">
