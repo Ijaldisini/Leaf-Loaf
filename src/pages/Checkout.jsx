@@ -555,8 +555,8 @@ export default function Checkout() {
             className="w-full bg-[#ebeacb] text-[#2d2864] font-black py-4 rounded-2xl text-lg hover:scale-[1.02] transition"
           >
             {isLoading
-              ? "⏳ Memproses..."
-              : `Kirim Pesanan (Rp ${totalPrice.toLocaleString("id-ID")}) 🚀`}
+              ? "Memproses..."
+              : `Kirim Pesanan (Rp ${totalPrice.toLocaleString("id-ID")})`}
           </button>
         </form>
       </main>
