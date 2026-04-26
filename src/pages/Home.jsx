@@ -552,37 +552,33 @@ export default function Home() {
 
               <div className="relative flex-1 min-h-[350px] md:min-h-[400px] max-h-[400px] md:max-h-[500px] overflow-hidden rounded-[2rem] border border-white/20 bg-white/30 backdrop-blur-md p-4 shadow-2xl">
                 {testimonials.length > 0 ? (
-                  <div
-                    className={`flex flex-col gap-4 ${
-                      testimonials.length > 3
-                        ? "animate-testimonial-scroll"
-                        : ""
-                    } hover:[animation-play-state:paused]`}
-                  >
-                    {[...testimonials, ...testimonials].map((testi, index) => (
-                      <div
-                        key={`${testi.id}-${index}`}
-                        className="bg-white/20 backdrop-blur-md p-5 md:p-6 rounded-2xl shadow-lg border border-white/20"
-                      >
-                        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-2 gap-2 sm:gap-0">
-                          <div>
-                            <div className="font-bold text-[#2db8e4] text-base md:text-lg">
-                              {testi.customer_name}
+                  <div className="h-full overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
+                    <div className="flex flex-col gap-4">
+                      {testimonials.map((testi) => (
+                        <div
+                          key={testi.id}
+                          className="bg-white/20 backdrop-blur-md p-5 md:p-6 rounded-2xl shadow-lg border border-white/20"
+                        >
+                          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-2 gap-2 sm:gap-0">
+                            <div>
+                              <div className="font-bold text-[#2db8e4] text-base md:text-lg">
+                                {testi.customer_name}
+                              </div>
+                              <div className="text-[10px] md:text-xs text-[#2db8e4]/80 bg-[#2db8e4]/10 px-3 py-1 rounded-full font-bold w-max mt-1">
+                                Batch {testi.batches?.name || "Lalu"}
+                              </div>
                             </div>
-                            <div className="text-[10px] md:text-xs text-[#2db8e4]/80 bg-[#2db8e4]/10 px-3 py-1 rounded-full font-bold w-max mt-1">
-                              Batch {testi.batches?.name || "Lalu"}
+                            <div className="flex">
+                              {renderStars(testi.rating || 5)}
                             </div>
                           </div>
-                          <div className="flex">
-                            {renderStars(testi.rating || 5)}
-                          </div>
-                        </div>
 
-                        <p className="text-gray-700 italic mt-2 md:mt-3 text-sm md:text-base leading-relaxed">
-                          "{testi.content}"
-                        </p>
-                      </div>
-                    ))}
+                          <p className="text-gray-700 italic mt-2 md:mt-3 text-sm md:text-base leading-relaxed">
+                            "{testi.content}"
+                          </p>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 ) : (
                   <div className="flex items-center justify-center h-full text-white/80 italic font-medium text-lg">
@@ -663,9 +659,7 @@ export default function Home() {
                     disabled={isSubmitting}
                     className="w-full bg-[#2db8e4] text-white font-black py-3 md:py-4 rounded-xl text-base md:text-lg hover:bg-[#1a9ac2] transition shadow-lg transform hover:-translate-y-1 disabled:bg-gray-400 disabled:text-gray-200"
                   >
-                    {isSubmitting
-                      ? "Sedang Mengirim..."
-                      : "Kirim Rating!"}
+                    {isSubmitting ? "Sedang Mengirim..." : "Kirim Rating!"}
                   </button>
                 </form>
               </div>
