@@ -550,14 +550,14 @@ export default function Home() {
                 )}
               </div>
 
-              <div className="relative flex-1 min-h-[350px] md:min-h-[400px] max-h-[400px] md:max-h-[500px] overflow-hidden rounded-[2rem] border border-white/20 bg-white/30 backdrop-blur-md p-4 shadow-2xl">
+              <div className="relative flex-1 min-h-[350px] md:min-h-[400px] max-h-[400px] md:max-h-[500px] overflow-hidden rounded-[2rem] border border-white/20 bg-white/30 backdrop-blur-md p-4 shadow-2xl flex flex-col">
                 {testimonials.length > 0 ? (
-                  <div className="h-full overflow-y-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
-                    <div className="flex flex-col gap-4">
+                  <div className="flex-1 overflow-y-auto touch-pan-y overscroll-contain [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
+                    <div className="flex flex-col gap-4 pb-2">
                       {testimonials.map((testi) => (
                         <div
                           key={testi.id}
-                          className="bg-white/20 backdrop-blur-md p-5 md:p-6 rounded-2xl shadow-lg border border-white/20"
+                          className="bg-white/20 backdrop-blur-md p-5 md:p-6 rounded-2xl shadow-lg border border-white/20 shrink-0"
                         >
                           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-2 gap-2 sm:gap-0">
                             <div>
@@ -581,7 +581,7 @@ export default function Home() {
                     </div>
                   </div>
                 ) : (
-                  <div className="flex items-center justify-center h-full text-white/80 italic font-medium text-lg">
+                  <div className="flex items-center justify-center flex-1 text-white/80 italic font-medium text-lg">
                     Belum ada testimoni.
                   </div>
                 )}
