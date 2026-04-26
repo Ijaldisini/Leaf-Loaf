@@ -6,6 +6,7 @@ import Checkout from './pages/Checkout';
 import SuccessPage from './pages/SuccessPage';
 import AdminDashboard from './pages/AdminDashboard';
 import CursorEffect from './components/CursorEffect';
+import "./styles/theme.css";
 
 function App() {
   return (
