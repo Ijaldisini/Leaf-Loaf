@@ -107,6 +107,7 @@ const TiltCardLink = ({ to, className, src, alt }) => {
         className="w-full h-full object-contain drop-shadow-xl"
         alt={alt}
         src={src}
+        loading="lazy"
       />
     </Link>
   );
@@ -128,18 +129,21 @@ const HeroSection = () => {
         src="/image-bunga-kuningkecoklatan.png"
         alt="Decoration"
         className="absolute top-[10%] md:top-[70px] left-[-20%] md:left-[-100px] w-[250px] md:w-[400px] h-auto pointer-events-none opacity-50 md:opacity-100 transition-all duration-300 z-10"
+        loading="lazy"
       />
 
       <img
         src="/image-bunga-pinktua.png"
         alt="Decoration"
         className="absolute bottom-[-5%] md:bottom-[520px] right-[-20%] md:right-[-50px] lg:right-[-50px] w-[300px] md:w-[250px] h-auto pointer-events-none opacity-50 md:opacity-100 transition-all duration-300 z-10"
+        loading="lazy"
       />
 
       <img
         src="/image-bunga-pinktua2.png"
         alt="Decoration"
         className="absolute bottom-5 left-5 md:bottom-[-80px] md:left-[1073px] w-[150px] md:w-[250px] h-auto pointer-events-none opacity-50 md:opacity-100 transition-all duration-300 z-10"
+        loading="lazy"
       />
 
       <div className="relative z-20 w-[60%] sm:w-[45%] md:w-[480px] mx-auto mt-16 md:mt-0 drop-shadow-2xl animate-fade-up flex justify-center items-center pointer-events-none">
@@ -147,6 +151,7 @@ const HeroSection = () => {
           src="/logo-hd.png"
           alt="Hero Leaf and Loaf"
           className="w-full h-auto object-contain transform hover:scale-105 transition-transform duration-500"
+          loading="lazy"
         />
       </div>
     </section>
@@ -252,6 +257,7 @@ export default function Home() {
           src="logo-hd.png"
           alt="Leaf n Loaff"
           className="max-w-[200px] h-auto"
+          loading="lazy"
         />
       </div>
     );
@@ -295,6 +301,7 @@ export default function Home() {
                   src="/group-1-tengah-atas-layer2.png"
                   alt="Title Ornamen"
                   className="w-[80%] max-w-[800px] h-auto object-contain drop-shadow-2xl"
+                  loading="lazy"
                 />
               </div>
 
@@ -323,6 +330,7 @@ export default function Home() {
                   src="/group-1-tengah-atas-layer2.png"
                   alt="Title Ornamen"
                   className="w-[110%] max-w-none h-auto object-contain drop-shadow-2xl translate-y-6 -mt-12"
+                  loading="lazy"
                 />
               </div>
 
@@ -358,6 +366,7 @@ export default function Home() {
                 src="/group-2-tengah-bawah-layer2.png"
                 alt="Ornamen Ombak Desktop"
                 className="w-[220%] h-auto object-contain opacity-80 origin-bottom translate-x-1 translate-y-0.5 scale-135"
+                loading="lazy"
                 style={{
                   animation: "bobY 4s ease-in-out infinite alternate",
                   willChange: "transform",
@@ -378,6 +387,7 @@ export default function Home() {
                 src="/group-2-tengah-bawah-layer2.png"
                 alt="Ornamen Ombak Mobile"
                 className="w-[190%] max-w-none h-auto object-contain opacity-80 origin-bottom -translate-x-75 -translate-y-4 scale-130"
+                loading="lazy"
                 style={{
                   animation: "bobY 4s ease-in-out infinite alternate",
                   willChange: "transform",
@@ -390,12 +400,14 @@ export default function Home() {
             src="/image-batu-kecil.png"
             alt="Batu kecil"
             className="absolute bottom-24 left-12 md:left-24 w-12 md:w-[120px] h-auto z-[2] pointer-events-none"
+            loading="lazy"
           />
 
           <img
             src="/image-bintang-laut.png"
             alt="Bintang laut"
             className="absolute bottom-28 right-10 md:right-28 w-10 md:w-[184px] h-auto z-[2] pointer-events-none rotate-12"
+            loading="lazy"
           />
 
           <style>
@@ -420,42 +432,49 @@ export default function Home() {
             className="absolute bottom-[20px] right-[-50px] md:bottom-[-1px] md:right-[-50px] w-[200px] md:w-[447px] h-auto pointer-events-none z-0"
             alt="Decoration Right"
             src="/image-bunga-kuningkecoklatan.png"
+            loading="lazy"
           />
 
           <img
             className="absolute top-[20px] left-[-30px] md:top-[150px] md:left-[-100px] w-[150px] md:w-[415px] h-auto pointer-events-none z-0"
             alt="Decoration Top Left"
             src="/image-bunga-pinktua.png"
+            loading="lazy"
           />
 
           <img
             className="absolute bottom-[10px] left-[-20px] md:bottom-[10px] md:left-100 w-[120px] md:w-[258px] h-auto pointer-events-none z-0"
             alt="Decoration Bottom Left"
             src="/image-bunga-pinktua2.png"
+            loading="lazy"
           />
 
           <img
             className="absolute bottom-[1010px] left-[10px] md:bottom-[650px] md:left-100 w-[50px] md:w-[70px] h-auto pointer-events-none z-0 opacity-70"
             alt="bubble atas"
             src="/image-gelembung-putih.png"
+            loading="lazy"
           />
 
           <img
             className="absolute bottom-[900px] left-[330px] md:bottom-[500px] md:left-350 w-[50px] md:w-[70px] h-auto pointer-events-none z-0 opacity-70"
             alt="bubble atas"
             src="/image-gelembung-putih.png"
+            loading="lazy"
           />
 
           <img
             className="absolute bottom-[450px] left-[305px] md:bottom-[350px] md:left-140 w-[50px] md:w-[70px] h-auto pointer-events-none z-0 opacity-70"
             alt="bubble atas"
             src="/image-gelembung-putih.png"
+            loading="lazy"
           />
 
           <img
             className="absolute bottom-[150px] left-[-18px] md:bottom-[150px] md:left-240 w-[50px] md:w-[70px] h-auto pointer-events-none z-0 opacity-70"
             alt="bubble atas"
             src="/image-gelembung-putih.png"
+            loading="lazy"
           />
 
           <div className="relative z-10 w-full max-w-7xl mx-auto px-4 flex flex-col xl:flex-row items-center justify-center gap-12 lg:gap-16">
@@ -464,6 +483,7 @@ export default function Home() {
               className="w-[280px] sm:w-[300px] h-[380px] sm:h-[400px] z-10 cursor-pointer"
               src="/menu-1-ayam-teriyaki.png"
               alt="Card 1"
+              loading="lazy"
             />
 
             <TiltCardLink
@@ -471,6 +491,7 @@ export default function Home() {
               className="w-[280px] sm:w-[300px] h-[380px] sm:h-[400px] z-10 cursor-pointer"
               src="/menu-2-telur-mayo.png"
               alt="Card 2"
+              loading="lazy"
             />
 
             <TiltCardLink
@@ -478,6 +499,7 @@ export default function Home() {
               className="w-[280px] sm:w-[300px] h-[380px] sm:h-[400px] z-10 cursor-pointer"
               src="/menu-3-bundling.png"
               alt="Card 3"
+              loading="lazy"
             />
           </div>
         </section>
@@ -490,33 +512,39 @@ export default function Home() {
             className="absolute inset-0 w-full h-full object-cover select-none pointer-events-none z-0"
             alt="Underwater background"
             src="/image-ladang.webp"
+            loading="lazy"
           />
 
           <img
             className="absolute bottom-0 left-0 w-full h-[30%] md:h-[40%] object-cover object-top select-none pointer-events-none z-0"
             alt="Sand bottom"
             src="/image-gradasi-to-footer.webp"
+            loading="lazy"
           />
 
           <img
             className="absolute w-[20%] md:w-[8%] min-w-[60px] h-auto top-[48%] md:top-[45%] right-[1%] select-none pointer-events-none z-10 opacity-90 md:opacity-100"
             alt="Decoration Top Right"
             src="/image-ubur-ubur.png"
+            loading="lazy"
           />
           <img
             className="absolute w-[25%] md:w-[14%] min-w-[100px] h-auto bottom-0 right-[-5%] md:right-[5%] select-none pointer-events-none z-10 opacity-60 md:opacity-100"
             alt="Decoration Bottom Right"
             src="/image-group-gelembung.png"
+            loading="lazy"
           />
           <img
             className="hidden md:block absolute w-[10%] min-w-[150px] h-auto bottom-[170px] right-[45%] select-none pointer-events-none z-10"
             alt="Decoration Bottom Center"
             src="/image-group-gelembung.png"
+            loading="lazy"
           />
           <img
             className="absolute w-[25%] md:w-[18%] min-w-[100px] md:min-w-[150px] h-auto bottom-[50px] md:bottom-[280px] left-[-5%] md:left-[-2%] select-none pointer-events-none z-10 opacity-60 md:opacity-100"
             alt="Decoration Bottom Left"
             src="/image-group-gelembung.png"
+            loading="lazy"
           />
 
           <div className="max-w-7xl mx-auto px-4 relative z-20 flex flex-col lg:flex-row gap-12 lg:gap-16 w-full">

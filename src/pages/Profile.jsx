@@ -110,31 +110,37 @@ const Profile = () => {
           className="absolute top-8 left-1/2 -translate-x-1/2 w-[90px] md:w-[120px] opacity-70 pointer-events-none z-20"
           alt="Ornament Top"
           src="/image-bunga-pinktua.png"
+          loading="lazy"
         />
         <img
           className="absolute bottom-[25px] md:bottom-[-81px] right-[45px] md:right-86 w-[40px] md:w-[280px] scale-125 md:scale-55 object-contain pointer-events-none z-10"
           alt="Ornament Bottom Right"
           src="/image-batu-rumput.png"
+          loading="lazy"
         />
         <img
           className="absolute left-8 bottom-[50px] md:bottom-80 w-[45px] md:w-[110px] object-contain pointer-events-none z-1"
           alt="Left Seaweed"
           src="/image-rumput-laut.png"
+          loading="lazy"
         />
         <img
           className="absolute bottom-[-270px] md:bottom-[-190px] left-0 w-full h-full scale-260 md:scale-108 object-contain pointer-events-none z-0"
           alt="Underwater Path"
           src="/image-pasir-jalan.webp"
+          loading="lazy"
         />
         <img
           className="absolute bottom-[0px] md:bottom-[0px] left-[0px] w-full h-[50%] md:h-[130%] object-cover pointer-events-none z-10"
           alt="Sand Base"
           src="/image-bikini-bottom.webp"
+          loading="lazy"
         />
         <img
           className="absolute bottom-0 left-0 w-full h-[30%] md:h-[40%] object-cover object-top select-none pointer-events-none z-10"
           alt="Sand bottom"
           src="/image-gradasi-to-footer-profil.webp"
+          loading="lazy"
         />
 
         <div className="relative z-20 w-full max-w-7xl mx-auto px-4 pt-32 pb-24 md:pt-40 flex flex-col items-center justify-center min-h-screen">
@@ -174,6 +180,7 @@ const Profile = () => {
               src="/image-batu-rumput-laut.png"
               alt="Center Ornament"
               className="w-[63px] opacity-80"
+              loading="lazy"
             />
           </div>
         </div>
@@ -205,6 +212,7 @@ const ProfileCardRenderer = ({ card }) => {
           className="w-full h-full object-fill"
           alt={card.imageAlt}
           src={card.imageSrc}
+          loading="lazy"
           style={{
             backfaceVisibility: "hidden",
             transform: "translateZ(0)",
