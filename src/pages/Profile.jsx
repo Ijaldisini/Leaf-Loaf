@@ -124,17 +124,17 @@ const Profile = () => {
         <img
           className="absolute bottom-[-270px] md:bottom-[-190px] left-0 w-full h-full scale-260 md:scale-108 object-contain pointer-events-none z-0"
           alt="Underwater Path"
-          src="/image-pasir-jalan.png"
+          src="/image-pasir-jalan.webp"
         />
         <img
           className="absolute bottom-[0px] md:bottom-[0px] left-[0px] w-full h-[50%] md:h-[130%] object-cover pointer-events-none z-10"
           alt="Sand Base"
-          src="/image-bikini-bottom.png"
+          src="/image-bikini-bottom.webp"
         />
         <img
           className="absolute bottom-0 left-0 w-full h-[30%] md:h-[40%] object-cover object-top select-none pointer-events-none z-10"
           alt="Sand bottom"
-          src="/image-gradasi-to-footer-profil.png"
+          src="/image-gradasi-to-footer-profil.webp"
         />
 
         <div className="relative z-20 w-full max-w-7xl mx-auto px-4 pt-32 pb-24 md:pt-40 flex flex-col items-center justify-center min-h-screen">

@@ -286,7 +286,7 @@ export default function Home() {
       <div className="relative z-10 bg-[#f9f8f3]">
         <section
           id="history"
-          className="relative w-full min-h-screen overflow-x-hidden pt-28 md:pt-40 pb-40 md:pb-64 bg-[url('/background-pasir.png')] bg-[length:auto] bg-center bg-no-repeat"
+          className="relative w-full min-h-screen overflow-x-hidden pt-28 md:pt-40 pb-40 md:pb-64 bg-[url('/background-pasir.webp')] bg-[length:auto] bg-center bg-no-repeat"
         >
           <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6 md:px-12 lg:px-24">
             <div className="hidden md:block">
@@ -489,13 +489,13 @@ export default function Home() {
           <img
             className="absolute inset-0 w-full h-full object-cover select-none pointer-events-none z-0"
             alt="Underwater background"
-            src="/image-ladang.png"
+            src="/image-ladang.webp"
           />
 
           <img
             className="absolute bottom-0 left-0 w-full h-[30%] md:h-[40%] object-cover object-top select-none pointer-events-none z-0"
             alt="Sand bottom"
-            src="/image-gradasi-to-footer.png"
+            src="/image-gradasi-to-footer.webp"
           />
 
           <img
