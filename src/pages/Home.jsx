@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "../config/supabaseClient";
 import SplashCursor from "./SplashCursor";
+import Swal from "sweetalert2";
 
 const TypewriterJustify = ({ text, speed = 25, delay = 0 }) => {
   const [displayedText, setDisplayedText] = useState("");
@@ -169,6 +170,17 @@ export default function Home() {
   const [newTestiRating, setNewTestiRating] = useState(5);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const showAlert = ({ icon, title, text }) => {
+    return Swal.fire({
+      icon,
+      title,
+      text,
+      confirmButtonColor: "#2db8e4",
+      confirmButtonText: "OK",
+      background: "#ffffff",
+    });
+  };
+
   const fetchHomeData = async () => {
     const { data: menuData } = await supabase
       .from("menus")
@@ -198,11 +210,17 @@ export default function Home() {
   const handleSubmitTestimonial = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
+
     if (!activeBatch) {
-      alert("Maaf, testimoni belum bisa dikirim karena PO sedang tutup.");
+      await showAlert({
+        icon: "warning",
+        title: "PO Tutup",
+        text: "Maaf, testimoni belum bisa dikirim karena PO sedang tutup.",
+      });
       setIsSubmitting(false);
       return;
     }
+
     try {
       const { error } = await supabase.from("testimonials").insert([
         {
@@ -212,14 +230,25 @@ export default function Home() {
           rating: newTestiRating,
         },
       ]);
+
       if (error) throw error;
-      alert("Terima kasih! Ulasan dan rating bintangmu sudah terbit.");
+
+      await showAlert({
+        icon: "success",
+        title: "Berhasil",
+        text: "Terima kasih! Ulasan dan rating bintangmu sudah terbit.",
+      });
+
       setNewTestiName("");
       setNewTestiContent("");
       setNewTestiRating(5);
       fetchHomeData();
     } catch (error) {
-      alert("Gagal mengirim testimoni: " + error.message);
+      await showAlert({
+        icon: "error",
+        title: "Gagal",
+        text: "Gagal mengirim testimoni: " + error.message,
+      });
     } finally {
       setIsSubmitting(false);
     }

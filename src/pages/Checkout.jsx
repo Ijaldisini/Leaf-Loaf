@@ -1,6 +1,7 @@
 import { supabase } from "../config/supabaseClient";
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import Swal from "sweetalert2";
 
 import {
   MapContainer,
@@ -62,6 +63,17 @@ export default function Checkout() {
   const [qrisFile, setQrisFile] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  const showAlert = ({ icon, title, text }) => {
+    return Swal.fire({
+      icon,
+      title,
+      text,
+      confirmButtonColor: "#2d2864",
+      confirmButtonText: "OK",
+      background: "#ffffff",
+    });
+  };
+
   useEffect(() => {
     const fetchMenus = async () => {
       const { data } = await supabase
@@ -118,7 +130,13 @@ export default function Checkout() {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
           }),
-        () => alert("Gagal mengambil lokasi."),
+        async () => {
+          await showAlert({
+            icon: "error",
+            title: "Lokasi Gagal",
+            text: "Gagal mengambil lokasi perangkat.",
+          });
+        },
       );
     }
   };
@@ -126,14 +144,25 @@ export default function Checkout() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (Object.keys(cart).length === 0)
-      return alert("Pilih minimal 1 menu sebelum memesan!");
+    if (Object.keys(cart).length === 0) {
+      await showAlert({
+        icon: "warning",
+        title: "Menu Kosong",
+        text: "Pilih minimal 1 menu sebelum memesan.",
+      });
+      return;
+    }
 
     if (
       formData.receiveMethod === "Delivery" &&
       (!formData.latitude || !formData.longitude)
     ) {
-      return alert("Harap tandai lokasi pengiriman di peta!");
+      await showAlert({
+        icon: "warning",
+        title: "Lokasi Belum Dipilih",
+        text: "Harap tandai lokasi pengiriman di peta.",
+      });
+      return;
     }
 
     setIsLoading(true);
@@ -143,15 +172,32 @@ export default function Checkout() {
         .from("batches")
         .select("id")
         .eq("status", "open")
-        .single();
+        .maybeSingle();
 
-      if (batchError || !activeBatch)
-        throw new Error("Maaf, saat ini PO sedang ditutup.");
+      if (batchError || !activeBatch) {
+        await showAlert({
+          icon: "warning",
+          title: "Batch Belum Dibuka",
+          text: "Saat ini belum ada batch pemesanan yang sedang dibuka.",
+        });
+        setIsLoading(false);
+        return;
+      }
 
       let qrisUrl = null;
 
       if (formData.paymentMethod === "QRIS") {
-        if (!qrisFile) throw new Error("Harap unggah bukti pembayaran QRIS!");
+        if (!qrisFile) {
+          setIsLoading(false);
+
+          await showAlert({
+            icon: "warning",
+            title: "Bukti Belum Diunggah",
+            text: "Harap unggah bukti pembayaran QRIS terlebih dahulu.",
+          });
+
+          return;
+        }
 
         const fileName = `${Date.now()}-${Math.random()}.${qrisFile.name
           .split(".")
@@ -219,7 +265,11 @@ export default function Checkout() {
       });
     } catch (error) {
       console.error(error);
-      alert(error.message);
+      await showAlert({
+        icon: "error",
+        title: "Terjadi Kesalahan",
+        text: error.message,
+      });
     } finally {
       setIsLoading(false);
     }
@@ -366,12 +416,12 @@ export default function Checkout() {
                 }`}
               >
                 <input
-                  hidden
                   type="radio"
                   name="receiveMethod"
                   value="Pickup"
-                  required
+                  checked={formData.receiveMethod === "Pickup"}
                   onChange={handleChange}
+                  className="absolute opacity-0 w-0 h-0"
                 />
                 Pickup
               </label>
@@ -384,12 +434,12 @@ export default function Checkout() {
                 }`}
               >
                 <input
-                  hidden
                   type="radio"
                   name="receiveMethod"
                   value="Delivery"
-                  required
+                  checked={formData.receiveMethod === "Delivery"}
                   onChange={handleChange}
+                  className="absolute opacity-0 w-0 h-0"
                 />
                 Delivery
               </label>
@@ -460,12 +510,12 @@ export default function Checkout() {
                 }`}
               >
                 <input
-                  hidden
                   type="radio"
                   name="paymentMethod"
                   value="COD"
-                  required
+                  checked={formData.paymentMethod === "COD"}
                   onChange={handleChange}
+                  className="absolute opacity-0 w-0 h-0"
                 />
                 COD
               </label>
@@ -478,11 +528,12 @@ export default function Checkout() {
                 }`}
               >
                 <input
-                  hidden
                   type="radio"
                   name="paymentMethod"
                   value="QRIS"
+                  checked={formData.paymentMethod === "QRIS"}
                   onChange={handleChange}
+                  className="absolute opacity-0 w-0 h-0"
                 />
                 QRIS
               </label>
@@ -512,7 +563,6 @@ export default function Checkout() {
                       <input
                         type="file"
                         accept="image/jpeg, image/png"
-                        required
                         hidden
                         onChange={(e) => {
                           const file = e.target.files[0];
