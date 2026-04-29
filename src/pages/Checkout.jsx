@@ -291,23 +291,30 @@ export default function Checkout() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[linear-gradient(180deg,#2db8e4_0%,#3D71B6_45%,#2d2864_100%)] text-[#ebeacb]">
-      <nav className="sticky top-0 z-50 bg-black/10 backdrop-blur-xl border-b border-white/10">
-        <div className="max-w-4xl mx-auto px-4 py-5 flex justify-between items-center">
-          <Link
-            to="/"
-            className="flex items-center gap-3 font-black text-xl tracking-wide text-[#ebeacb] hover:opacity-90 transition"
-          >
-            <img
-              src="/logo-hd.png"
-              alt="Leaf n Loaff Logo"
-              className="w-10 h-10 object-contain drop-shadow-lg"
-            />
-            <span>Leaf n Loaff</span>
-          </Link>
+      <nav className="fixed top-0 left-0 w-full z-50 bg-transparent py-8 pointer-events-none">
+        <div className="max-w-5xl mx-auto px-6 flex flex-col pointer-events-auto">
+          <ul className="flex justify-center md:justify-between items-center gap-8 md:gap-16 font-bold tracking-widest text-sm mb-3 drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">
+            <li className="cursor-pointer transition">
+              <a href="/" className="!text-[#ebeacb] hover:!text-white">
+                BERANDA
+              </a>
+            </li>
+            <li className="cursor-pointer transition">
+              <a href="/checkout" className="!text-[#ebeacb] hover:!text-white">
+                PESAN
+              </a>
+            </li>
+            <li className="cursor-pointer transition">
+              <a href="/profile" className="!text-[#ebeacb] hover:!text-white">
+                PROFIL
+              </a>
+            </li>
+          </ul>
+          <div className="w-full h-[2px] bg-[#ebeacb] rounded-full opacity-80 shadow-sm"></div>
         </div>
       </nav>
 
-      <main className="flex-grow max-w-4xl w-full mx-auto px-4 py-10">
+      <main className="flex-grow max-w-4xl w-full mx-auto px-4 py-25">
         <div className="text-center mb-10">
           <h1 className="text-4xl md:text-5xl font-black mb-2">
             Form Pemesanan
