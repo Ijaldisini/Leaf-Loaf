@@ -189,8 +189,7 @@ export default function Home() {
     const { data: testimonialData } = await supabase
       .from("testimonials")
       .select("*, batches(name)")
-      .order("created_at", { ascending: false })
-      .limit(6);
+      .order("created_at", { ascending: false });
     const { data: batchData } = await supabase
       .from("batches")
       .select("id")
