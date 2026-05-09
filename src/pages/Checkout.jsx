@@ -7,6 +7,7 @@ import {
   MapContainer,
   TileLayer,
   Marker,
+  Circle,
   useMapEvents,
   useMap,
 } from "react-leaflet";
@@ -22,6 +23,22 @@ L.Icon.Default.mergeOptions({
   iconRetinaUrl: markerIcon2x,
   shadowUrl: markerShadow,
 });
+
+const UNEJ_LOCATION = { lat: -8.1646, lng: 113.7169 };
+
+const calculateDistance = (lat1, lon1, lat2, lon2) => {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * (Math.PI / 180);
+  const dLon = (lon2 - lon1) * (Math.PI / 180);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * (Math.PI / 180)) *
+      Math.cos(lat2 * (Math.PI / 180)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+};
 
 const MapEvents = ({ onMapClick }) => {
   useMapEvents({
@@ -121,15 +138,58 @@ export default function Checkout() {
     });
   };
 
+  const handleMapClick = (lat, lng) => {
+    const distance = calculateDistance(
+      UNEJ_LOCATION.lat,
+      UNEJ_LOCATION.lng,
+      lat,
+      lng,
+    );
+
+    if (distance > 1) {
+      showAlert({
+        icon: "warning",
+        title: "Di Luar Jangkauan",
+        text: "Maaf, lokasi pengiriman yang dipilih berada di luar radius 1 km dari Universitas Jember.",
+      });
+      return;
+    }
+
+    setFormData({
+      ...formData,
+      latitude: lat,
+      longitude: lng,
+    });
+  };
+
   const handleGeolocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
-        (position) =>
+        (position) => {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+          const distance = calculateDistance(
+            UNEJ_LOCATION.lat,
+            UNEJ_LOCATION.lng,
+            lat,
+            lng,
+          );
+
+          if (distance > 1) {
+            showAlert({
+              icon: "warning",
+              title: "Di Luar Jangkauan",
+              text: "Lokasi GPS Anda saat ini berada di luar radius 1 km dari Universitas Jember.",
+            });
+            return;
+          }
+
           setFormData({
             ...formData,
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          }),
+            latitude: lat,
+            longitude: lng,
+          });
+        },
         async () => {
           await showAlert({
             icon: "error",
@@ -160,7 +220,7 @@ export default function Checkout() {
       await showAlert({
         icon: "warning",
         title: "Lokasi Belum Dipilih",
-        text: "Harap tandai lokasi pengiriman di peta.",
+        text: "Harap tandai lokasi pengiriman di peta dalam area Universitas Jember.",
       });
       return;
     }
@@ -471,9 +531,14 @@ export default function Checkout() {
                   📍 Gunakan Lokasi Saat Ini
                 </button>
 
-                <div className="h-[260px] rounded-2xl overflow-hidden">
+                <p className="text-sm text-yellow-300">
+                  * Area pengiriman terbatas dalam radius 1 km dari Universitas
+                  Jember.
+                </p>
+
+                <div className="h-[260px] rounded-2xl overflow-hidden relative z-0">
                   <MapContainer
-                    center={[-8.1724, 113.6995]}
+                    center={[UNEJ_LOCATION.lat, UNEJ_LOCATION.lng]}
                     zoom={15}
                     style={{ height: "100%", width: "100%" }}
                   >
@@ -481,19 +546,24 @@ export default function Checkout() {
                       url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                       attribution="&copy; OpenStreetMap"
                     />
-                    <MapEvents
-                      onMapClick={(lat, lng) =>
-                        setFormData({
-                          ...formData,
-                          latitude: lat,
-                          longitude: lng,
-                        })
-                      }
+
+                    <Circle
+                      center={[UNEJ_LOCATION.lat, UNEJ_LOCATION.lng]}
+                      radius={1000}
+                      pathOptions={{
+                        color: "#2db8e4",
+                        fillColor: "#2db8e4",
+                        fillOpacity: 0.2,
+                      }}
                     />
+
+                    <MapEvents onMapClick={handleMapClick} />
+
                     <RecenterMap
-                      lat={formData.latitude}
-                      lng={formData.longitude}
+                      lat={formData.latitude || UNEJ_LOCATION.lat}
+                      lng={formData.longitude || UNEJ_LOCATION.lng}
                     />
+
                     {formData.latitude && formData.longitude && (
                       <Marker
                         position={[formData.latitude, formData.longitude]}
