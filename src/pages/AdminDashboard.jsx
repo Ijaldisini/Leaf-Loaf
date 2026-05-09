@@ -335,7 +335,7 @@ export default function AdminDashboard() {
               >
                 <span className="truncate font-semibold text-white">
                   {batches.find((b) => b.id === selectedBatchFilter)?.name ||
-                      "Pilih Batch"}
+                    "Pilih Batch"}
                 </span>
                 {/* <svg
                   className={`fill-current h-4 w-4 text-white transition-transform duration-300 ${
@@ -491,7 +491,7 @@ export default function AdminDashboard() {
                                 {order.address_detail}
                               </p>
                               <a
-                                href={`http://googleusercontent.com/maps.google.com/?q=${order.latitude},${order.longitude}`}
+                                href={`https://www.google.com/maps?q=${order.latitude},${order.longitude}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 style={{
