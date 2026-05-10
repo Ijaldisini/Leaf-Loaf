@@ -20,6 +20,10 @@ export default function AdminDashboard() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
+  const [testiBatches, setTestiBatches] = useState([]);
+  const [newTestiBatchName, setNewTestiBatchName] = useState("");
+  const [isAddingTestiBatch, setIsAddingTestiBatch] = useState(false);
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -76,18 +80,56 @@ export default function AdminDashboard() {
       )
       .order("created_at", { ascending: false });
 
-    const { data: batchData } = await supabase
+    const { data: allBatchesData } = await supabase
       .from("batches")
       .select("*")
       .order("created_at", { ascending: false });
 
-    if (orderData) setOrders(orderData);
-    if (batchData) {
-      setBatches(batchData);
-      if (batchData.length > 0 && !selectedBatchFilter) {
-        setSelectedBatchFilter(batchData[0].id);
-      }
+    if (allBatchesData) {
+      const orderBatchesData = allBatchesData.filter(
+        (b) => !b.name.toLowerCase().includes("testimoni"),
+      );
+      const testiBatchesData = allBatchesData.filter((b) =>
+        b.name.toLowerCase().includes("testimoni"),
+      );
+
+      setBatches(orderBatchesData);
+      setTestiBatches(testiBatchesData);
     }
+
+    setIsLoading(false);
+  };
+
+  const handleAddTestiBatch = async (e) => {
+    e.preventDefault();
+    if (!newTestiBatchName.trim()) return;
+
+    const finalName = newTestiBatchName.toLowerCase().includes("testimoni")
+      ? newTestiBatchName
+      : `Testimoni ${newTestiBatchName}`;
+
+    setIsAddingTestiBatch(true);
+    const { error } = await supabase
+      .from("batches")
+      .insert([{ name: finalName, status: "open" }]);
+
+    if (error) {
+      alert("Gagal menambah batch testimoni: " + error.message);
+    } else {
+      setNewTestiBatchName("");
+      fetchData();
+    }
+    setIsAddingTestiBatch(false);
+  };
+
+  const toggleTestiBatchStatus = async (batchId, currentStatus) => {
+    const newStatus = currentStatus === "open" ? "closed" : "open";
+    await supabase
+      .from("batches")
+      .update({ status: newStatus })
+      .eq("id", batchId);
+
+    fetchData();
   };
 
   const handleAddBatch = async (e) => {
@@ -311,6 +353,78 @@ export default function AdminDashboard() {
                   }`}
                 >
                   {batch.status === "open" ? "Tutup PO" : "Buka PO"}
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="glass-card animate-in p-5 md:p-8 mt-8">
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-6">
+            <div>
+              <h2 className="font-[var(--font-heading)] text-xl md:text-2xl font-bold flex items-center flex-wrap gap-2">
+                <span className="text-gradient">Manajemen Batch Testimoni</span>
+              </h2>
+            </div>
+
+            <form
+              onSubmit={handleAddTestiBatch}
+              className="flex flex-col sm:flex-row w-full lg:w-auto gap-3"
+            >
+              <input
+                type="text"
+                placeholder="Nama Sesi (misal: Sesi 1)"
+                value={newTestiBatchName}
+                onChange={(e) => setNewTestiBatchName(e.target.value)}
+                required
+                className="input-glass w-full sm:min-w-[220px]"
+              />
+              <button
+                type="submit"
+                disabled={isAddingTestiBatch}
+                className="btn-3d px-5 py-2.5 text-sm w-full sm:w-auto whitespace-nowrap"
+              >
+                {isAddingTestiBatch ? "Memproses..." : "Buka Sesi Testimoni"}
+              </button>
+            </form>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+            {testiBatches.map((batch) => (
+              <div
+                key={batch.id}
+                className="glass-card p-5 flex items-center gap-4 transition-all duration-300"
+                style={{
+                  background:
+                    batch.status === "open"
+                      ? "rgba(34,197,94,0.08)"
+                      : "rgba(255,255,255,0.04)",
+                }}
+              >
+                <div className="flex-1">
+                  <p className="font-[var(--font-heading)] font-bold text-base md:text-lg mb-1.5 text-white">
+                    {batch.name}
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={
+                        batch.status === "open"
+                          ? "pulse-dot"
+                          : "pulse-dot pulse-dot-red"
+                      }
+                    />
+                    <span
+                      className={`text-xs font-bold uppercase ${batch.status === "open" ? "text-[var(--leaf-400)]" : "text-red-400"}`}
+                    >
+                      {batch.status === "open" ? "Dibuka" : "Ditutup"}
+                    </span>
+                  </div>
+                </div>
+                <button
+                  onClick={() => toggleTestiBatchStatus(batch.id, batch.status)}
+                  className={`btn-3d px-4 py-2 text-xs md:text-sm whitespace-nowrap ${batch.status === "open" ? "btn-3d-danger" : ""}`}
+                >
+                  {batch.status === "open" ? "Tutup Form" : "Buka Form"}
                 </button>
               </div>
             ))}

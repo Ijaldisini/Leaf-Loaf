@@ -164,7 +164,7 @@ export default function Home() {
   const [testimonials, setTestimonials] = useState([]);
   const [activeBatch, setActiveBatch] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-
+  const [activeTestiBatch, setActiveTestiBatch] = useState(null);
   const [newTestiName, setNewTestiName] = useState("");
   const [newTestiContent, setNewTestiContent] = useState("");
   const [newTestiRating, setNewTestiRating] = useState(5);
@@ -200,6 +200,26 @@ export default function Home() {
     if (testimonialData) setTestimonials(testimonialData);
     if (batchData) setActiveBatch(batchData);
     setIsLoading(false);
+
+    const { data: openBatches } = await supabase
+      .from("batches")
+      .select("*")
+      .eq("status", "open");
+
+    if (openBatches && openBatches.length > 0) {
+      const orderBatch = openBatches.find(
+        (b) => !b.name.toLowerCase().includes("testimoni"),
+      );
+      const testiBatch = openBatches.find((b) =>
+        b.name.toLowerCase().includes("testimoni"),
+      );
+
+      setActiveBatch(orderBatch || null);
+      setActiveTestiBatch(testiBatch || null);
+    } else {
+      setActiveBatch(null);
+      setActiveTestiBatch(null);
+    }
   };
 
   useEffect(() => {
@@ -210,11 +230,11 @@ export default function Home() {
     e.preventDefault();
     setIsSubmitting(true);
 
-    if (!activeBatch) {
-      await showAlert({
+    if (!activeTestiBatch) {
+      await Swal.fire({
         icon: "warning",
-        title: "PO Tutup",
-        text: "Maaf, testimoni belum bisa dikirim karena PO sedang tutup.",
+        title: "Sesi Ditutup",
+        text: "Maaf, pengisian testimoni sedang ditutup saat ini.",
       });
       setIsSubmitting(false);
       return;
@@ -225,27 +245,25 @@ export default function Home() {
         {
           customer_name: newTestiName,
           content: newTestiContent,
-          batch_id: activeBatch.id,
-          rating: newTestiRating,
+          batch_id: activeTestiBatch.id,
         },
       ]);
 
       if (error) throw error;
 
-      await showAlert({
+      await Swal.fire({
         icon: "success",
-        title: "Berhasil",
-        text: "Terima kasih! Ulasan dan rating bintangmu sudah terbit.",
+        title: "Terima Kasih!",
+        text: "Testimoni kamu berhasil dikirim.",
       });
 
       setNewTestiName("");
       setNewTestiContent("");
-      setNewTestiRating(5);
       fetchHomeData();
     } catch (error) {
-      await showAlert({
+      await Swal.fire({
         icon: "error",
-        title: "Gagal",
+        title: "Oops!",
         text: "Gagal mengirim testimoni: " + error.message,
       });
     } finally {
@@ -621,7 +639,7 @@ export default function Home() {
                                 {testi.customer_name}
                               </div>
                               <div className="text-[10px] md:text-xs text-[#2db8e4]/80 bg-[#2db8e4]/10 px-3 py-1 rounded-full font-bold w-max mt-1">
-                                Batch {testi.batches?.name || "Lalu"}
+                                {testi.batches?.name || "Lalu"}
                               </div>
                             </div>
                             <div className="flex">
