@@ -80,6 +80,8 @@ export default function AdminDashboard() {
       )
       .order("created_at", { ascending: false });
 
+      if (orderData) setOrders(orderData);
+
     const { data: allBatchesData } = await supabase
       .from("batches")
       .select("*")
