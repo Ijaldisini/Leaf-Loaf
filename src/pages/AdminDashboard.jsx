@@ -80,7 +80,7 @@ export default function AdminDashboard() {
       )
       .order("created_at", { ascending: false });
 
-      if (orderData) setOrders(orderData);
+    if (orderData) setOrders(orderData);
 
     const { data: allBatchesData } = await supabase
       .from("batches")
@@ -173,6 +173,67 @@ export default function AdminDashboard() {
     setSelectedBatchFilter(value);
     setCurrentPage(1);
     setIsDropdownOpen(false);
+  };
+
+  const handleExportExcel = () => {
+    if (filteredOrders.length === 0) {
+      alert("Tidak ada data pesanan untuk diekspor!");
+      return;
+    }
+
+    const headers = [
+      "Nama Pelanggan",
+      "No HP",
+      "Detail Pesanan",
+      "Total Harga (Rp)",
+      "Metode Pengiriman",
+      "Detail Alamat/Notes",
+      "Metode Pembayaran",
+      "Status",
+      "Tanggal Pemesanan",
+    ];
+
+    const cleanStr = (str) => {
+      if (!str) return '"-"';
+      return `"${String(str).replace(/"/g, '""').replace(/\n/g, ", ")}"`;
+    };
+
+    const rows = filteredOrders.map((order) => {
+      const orderDetails = order.order_items
+        ? order.order_items
+            .map((item) => `${item.quantity}x ${item.menus?.name || "Menu"}`)
+            .join(", ")
+        : "-";
+
+      return [
+        cleanStr(order.customer_name),
+        `="${order.phone}"`,
+        cleanStr(orderDetails),
+        order.total_price,
+        cleanStr(order.receive_method),
+        cleanStr(order.address_detail || order.notes),
+        cleanStr(order.payment_method),
+        cleanStr(order.order_status),
+        cleanStr(new Date(order.created_at).toLocaleString("id-ID")),
+      ].join(";");
+    });
+
+    const csvContent =
+      "data:text/csv;charset=utf-8,\uFEFF" +
+      [headers.join(";"), ...rows].join("\n");
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+
+    const batchName = activeBatch
+      ? activeBatch.name.replace(/\s+/g, "_")
+      : "Semua_Pesanan";
+    link.setAttribute("download", `Data_Pesanan_LeafnLoaff_${batchName}.csv`);
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const activeBatch = batches.find((b) => b.id === selectedBatchFilter);
@@ -442,7 +503,15 @@ export default function AdminDashboard() {
               </span>
             </h2>
 
-            <div className="relative w-full sm:w-[250px]" ref={dropdownRef}>
+            <div className="flex flex-col sm:flex-row w-full sm:w-auto gap-3 items-center">
+              <button
+                onClick={handleExportExcel}
+                className="btn-3d px-4 py-2 text-sm w-full sm:w-auto flex items-center justify-center gap-2"
+                style={{ background: "#16a34a", color: "white" }} // Warna hijau khas Excel
+              >
+                <span>📥</span> Export Excel
+              </button>
+
               <button
                 type="button"
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
