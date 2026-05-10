@@ -184,10 +184,12 @@ export default function AdminDashboard() {
     const headers = [
       "Nama Pelanggan",
       "No HP",
-      "Detail Pesanan",
+      "Menu Pesanan",
+      "Jumlah",
       "Total Harga (Rp)",
       "Metode Pengiriman",
-      "Detail Alamat/Notes",
+      "Detail Alamat",
+      "Catatan (Notes)",
       "Metode Pembayaran",
       "Status",
       "Tanggal Pemesanan",
@@ -199,19 +201,23 @@ export default function AdminDashboard() {
     };
 
     const rows = filteredOrders.map((order) => {
-      const orderDetails = order.order_items
-        ? order.order_items
-            .map((item) => `${item.quantity}x ${item.menus?.name || "Menu"}`)
-            .join(", ")
+      const menuNames = order.order_items
+        ? order.order_items.map((item) => item.menus?.name || "Menu").join(", ")
+        : "-";
+
+      const menuQuantities = order.order_items
+        ? order.order_items.map((item) => item.quantity).join(", ")
         : "-";
 
       return [
         cleanStr(order.customer_name),
         `="${order.phone}"`,
-        cleanStr(orderDetails),
+        cleanStr(menuNames),
+        cleanStr(menuQuantities),
         order.total_price,
         cleanStr(order.receive_method),
-        cleanStr(order.address_detail || order.notes),
+        cleanStr(order.address_detail),
+        cleanStr(order.notes),
         cleanStr(order.payment_method),
         cleanStr(order.order_status),
         cleanStr(new Date(order.created_at).toLocaleString("id-ID")),
