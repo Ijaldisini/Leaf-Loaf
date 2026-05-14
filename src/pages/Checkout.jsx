@@ -92,6 +92,29 @@ export default function Checkout() {
   };
 
   useEffect(() => {
+    const checkActiveBatch = async () => {
+      const { data: openBatches, error } = await supabase
+        .from("batches")
+        .select("id, name")
+        .eq("status", "open");
+
+      const activeOrderBatches = openBatches?.filter(
+        (b) => !b.name.toLowerCase().includes("testimoni"),
+      );
+
+      if (error || !activeOrderBatches || activeOrderBatches.length === 0) {
+        showAlert({
+          icon: "info",
+          title: "Pemesanan Ditutup",
+          text: "Saat ini belum ada sesi pemesanan (batch) yang dibuka. Anda belum bisa melakukan checkout.",
+        });
+      }
+    };
+
+    checkActiveBatch();
+  }, []);
+
+  useEffect(() => {
     const fetchMenus = async () => {
       const { data } = await supabase
         .from("menus")
@@ -228,13 +251,21 @@ export default function Checkout() {
     setIsLoading(true);
 
     try {
-      const { data: activeBatch, error: batchError } = await supabase
+      // Perbaikan: Cari batch terbuka dan filter yang BUKAN testimoni
+      const { data: openBatches, error: batchError } = await supabase
         .from("batches")
-        .select("id")
-        .eq("status", "open")
-        .maybeSingle();
+        .select("id, name")
+        .eq("status", "open");
 
-      if (batchError || !activeBatch) {
+      const activeOrderBatches = openBatches?.filter(
+        (b) => !b.name.toLowerCase().includes("testimoni"),
+      );
+
+      if (
+        batchError ||
+        !activeOrderBatches ||
+        activeOrderBatches.length === 0
+      ) {
         await showAlert({
           icon: "warning",
           title: "Batch Belum Dibuka",
@@ -243,6 +274,9 @@ export default function Checkout() {
         setIsLoading(false);
         return;
       }
+
+      // Ambil batch pesanan (bukan testimoni) yang aktif (indeks pertama)
+      const activeBatch = activeOrderBatches[0];
 
       let qrisUrl = null;
 
@@ -280,7 +314,7 @@ export default function Checkout() {
         {
           id: orderId,
           po_number: poNumber,
-          batch_id: activeBatch.id,
+          batch_id: activeBatch.id, // Pastikan ID ini berasal dari batch pesanan
           customer_name: formData.name,
           phone: formData.phone,
           receive_method: formData.receiveMethod,
