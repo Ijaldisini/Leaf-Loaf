@@ -186,34 +186,58 @@ export default function AdminDashboard() {
       "No HP",
       "Menu Pesanan",
       "Jumlah",
+      "Total",
       "Total Harga (Rp)",
       "Metode Pengiriman",
       "Detail Alamat",
-      "Catatan (Notes)",
+      "Notes",
       "Metode Pembayaran",
       "Status",
       "Tanggal Pemesanan",
     ];
 
     const cleanStr = (str) => {
-      if (!str) return '"-"';
-      return `"${String(str).replace(/"/g, '""').replace(/\n/g, ", ")}"`;
+      if (str === null || str === undefined) return '"-"';
+      return `"${String(str).replace(/"/g, '""')}"`;
     };
 
     const rows = filteredOrders.map((order) => {
-      const menuNames = order.order_items
-        ? order.order_items.map((item) => item.menus?.name || "Menu").join(", ")
-        : "-";
+      const orderItems = order.order_items || [];
 
-      const menuQuantities = order.order_items
-        ? order.order_items.map((item) => item.quantity).join(", ")
-        : "-";
+      const menuNames =
+        orderItems.length > 0
+          ? orderItems.map((item) => item.menus?.name || "Menu").join("\n")
+          : "-";
+
+      const getRealQuantity = (item) => {
+        const menuName = (item.menus?.name || "").toLowerCase();
+        return menuName.includes("bundling")
+          ? item.quantity * 2
+          : item.quantity;
+      };
+
+      const menuQuantities =
+        orderItems.length > 0
+          ? orderItems.map((item) => getRealQuantity(item)).join("\n")
+          : "-";
+
+      const totalItems = orderItems.reduce(
+        (sum, item) => sum + getRealQuantity(item),
+        0,
+      );
+
+      let waLink = "-";
+      if (order.phone) {
+        const formattedPhone = order.phone.toString().replace(/^0/, "62");
+        waLink = `https://wa.me/${formattedPhone}`;
+      }
 
       return [
         cleanStr(order.customer_name),
-        `="${order.phone}"`,
+        cleanStr(waLink),
         cleanStr(menuNames),
         cleanStr(menuQuantities),
+        totalItems,
         order.total_price,
         cleanStr(order.receive_method),
         cleanStr(order.address_detail),
@@ -256,6 +280,17 @@ export default function AdminDashboard() {
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE,
   );
+
+  const totalPorsiKeseluruhan = filteredOrders.reduce((total, order) => {
+    const porsiPesanan = (order.order_items || []).reduce((sum, item) => {
+      const menuName = (item.menus?.name || "").toLowerCase();
+      const realQty = menuName.includes("bundling")
+        ? item.quantity * 2
+        : item.quantity;
+      return sum + realQty;
+    }, 0);
+    return total + porsiPesanan;
+  }, 0);
 
   if (!session) {
     return (
@@ -483,7 +518,11 @@ export default function AdminDashboard() {
                       }
                     />
                     <span
-                      className={`text-xs font-bold uppercase ${batch.status === "open" ? "text-[var(--leaf-400)]" : "text-red-400"}`}
+                      className={`text-xs font-bold uppercase ${
+                        batch.status === "open"
+                          ? "text-[var(--leaf-400)]"
+                          : "text-red-400"
+                      }`}
                     >
                       {batch.status === "open" ? "Dibuka" : "Ditutup"}
                     </span>
@@ -491,7 +530,9 @@ export default function AdminDashboard() {
                 </div>
                 <button
                   onClick={() => toggleTestiBatchStatus(batch.id, batch.status)}
-                  className={`btn-3d px-4 py-2 text-xs md:text-sm whitespace-nowrap ${batch.status === "open" ? "btn-3d-danger" : ""}`}
+                  className={`btn-3d px-4 py-2 text-xs md:text-sm whitespace-nowrap ${
+                    batch.status === "open" ? "btn-3d-danger" : ""
+                  }`}
                 >
                   {batch.status === "open" ? "Tutup Form" : "Buka Form"}
                 </button>
@@ -500,12 +541,12 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        <div className="glass-card animate-in p-5 md:p-8">
+        <div className="glass-card animate-in p-5 md:p-8 mt-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
             <h2 className="font-[var(--font-heading)] text-xl md:text-2xl font-bold flex items-center flex-wrap gap-2">
               <span className="text-gradient">Monitoring Pesanan</span>
               <span className="text-[var(--text-muted)] text-sm font-normal">
-                {filteredOrders.length} pesanan
+                {filteredOrders.length} pesanan | {totalPorsiKeseluruhan} Porsi
               </span>
             </h2>
 
@@ -513,60 +554,53 @@ export default function AdminDashboard() {
               <button
                 onClick={handleExportExcel}
                 className="btn-3d px-4 py-2 text-sm w-full sm:w-auto flex items-center justify-center gap-2"
-                style={{ background: "#16a34a", color: "white" }} // Warna hijau khas Excel
+                style={{ background: "#16a34a", color: "white" }}
               >
                 <span>📥</span> Export Excel
               </button>
 
-              <button
-                type="button"
-                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="input-glass w-full flex justify-between items-center cursor-pointer text-left focus:ring-2 focus:ring-[var(--leaf-400)]"
-                style={{ background: "rgba(255, 255, 255, 0.12)" }}
-              >
-                <span className="truncate font-semibold text-white">
-                  {batches.find((b) => b.id === selectedBatchFilter)?.name ||
-                    "Pilih Batch"}
-                </span>
-                {/* <svg
-                  className={`fill-current h-4 w-4 text-white transition-transform duration-300 ${
-                    isDropdownOpen ? "rotate-180" : ""
-                  }`}
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
+              <div className="relative w-full sm:w-[250px]" ref={dropdownRef}>
+                <button
+                  type="button"
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  className="input-glass w-full flex justify-between items-center cursor-pointer text-left focus:ring-2 focus:ring-[var(--leaf-400)]"
+                  style={{ background: "rgba(255, 255, 255, 0.12)" }}
                 >
-                  <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                </svg> */}
-              </button>
+                  <span className="truncate font-semibold text-white">
+                    {batches.find((b) => b.id === selectedBatchFilter)?.name ||
+                      "Pilih Batch"}
+                  </span>
+                </button>
 
-              <div
-                className={`absolute z-50 mt-2 w-full rounded-2xl border border-[var(--border-glass)] shadow-2xl transition-all duration-200 origin-top ${
-                  isDropdownOpen
-                    ? "opacity-100 scale-y-100 translate-y-0"
-                    : "opacity-0 scale-y-95 -translate-y-2 pointer-events-none"
-                }`}
-                style={{
-                  background: "rgba(61, 189, 229, 0.95)",
-                  backdropFilter: "blur(24px)",
-                  WebkitBackdropFilter: "blur(24px)",
-                }}
-              >
-                <ul className="max-h-60 overflow-y-auto py-2">
-                  {batches.map((batch) => (
-                    <li
-                      key={batch.id}
-                      onClick={() => handleFilterChange(batch.id)}
-                      className={`px-5 py-3 cursor-pointer text-sm transition-colors flex justify-between items-center ${
-                        selectedBatchFilter === batch.id
-                          ? "bg-[var(--leaf-400)] text-white font-bold"
-                          : "text-white/80 hover:bg-white/10 hover:text-white"
-                      }`}
-                    >
-                      <span>{batch.name}</span>
-                      {selectedBatchFilter === batch.id && <span>✓</span>}
-                    </li>
-                  ))}
-                </ul>
+                <div
+                  className={`absolute z-50 mt-2 w-full rounded-2xl border border-[var(--border-glass)] shadow-2xl transition-all duration-200 origin-top ${
+                    isDropdownOpen
+                      ? "opacity-100 scale-y-100 translate-y-0"
+                      : "opacity-0 scale-y-95 -translate-y-2 pointer-events-none"
+                  }`}
+                  style={{
+                    background: "rgba(61, 189, 229, 0.95)",
+                    backdropFilter: "blur(24px)",
+                    WebkitBackdropFilter: "blur(24px)",
+                  }}
+                >
+                  <ul className="max-h-60 overflow-y-auto py-2">
+                    {batches.map((batch) => (
+                      <li
+                        key={batch.id}
+                        onClick={() => handleFilterChange(batch.id)}
+                        className={`px-5 py-3 cursor-pointer text-sm transition-colors flex justify-between items-center ${
+                          selectedBatchFilter === batch.id
+                            ? "bg-[var(--leaf-400)] text-white font-bold"
+                            : "text-white/80 hover:bg-white/10 hover:text-white"
+                        }`}
+                      >
+                        <span>{batch.name}</span>
+                        {selectedBatchFilter === batch.id && <span>✓</span>}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
             </div>
           </div>
@@ -574,11 +608,13 @@ export default function AdminDashboard() {
           {filteredOrders.length > 0 ? (
             <>
               <div className="w-full overflow-x-auto rounded-2xl border border-[var(--border-glass)] bg-white/5">
-                <table className="table-glass w-full min-w-[800px]">
+                <table className="table-glass w-full min-w-[950px]">
                   <thead>
                     <tr>
                       <th>Pelanggan</th>
-                      <th>Pesanan (Menu)</th>
+                      <th>Menu Pesanan</th>
+                      <th>Jumlah</th>
+                      <th>Total</th>
                       <th>Logistik</th>
                       <th>Pembayaran</th>
                       <th>Validasi</th>
@@ -586,201 +622,274 @@ export default function AdminDashboard() {
                   </thead>
 
                   <tbody>
-                    {paginatedOrders.map((order) => (
-                      <tr key={order.id}>
-                        <td>
-                          <div
-                            style={{
-                              fontWeight: 700,
-                              color: "var(--text-primary)",
-                              fontSize: "14px",
-                              marginBottom: "4px",
-                            }}
-                          >
-                            {order.customer_name}
-                          </div>
-                          <a
-                            href={`https://wa.me/${order.phone}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            style={{
-                              fontSize: "12px",
-                              color: "var(--leaf-400)",
-                              display: "block",
-                              marginBottom: "4px",
-                            }}
-                          >
-                            {order.phone}
-                          </a>
-                          <div
-                            style={{
-                              fontSize: "12px",
-                              color: "var(--text-muted)",
-                            }}
-                          >
-                            Notes: {order.notes || "—"}
-                          </div>
-                        </td>
+                    {paginatedOrders.map((order) => {
+                      let waNumber = "";
+                      if (order.phone) {
+                        waNumber = order.phone.toString().replace(/^0/, "62");
+                      }
 
-                        <td>
-                          <div
-                            style={{
-                              display: "flex",
-                              flexDirection: "column",
-                              gap: "4px",
-                              marginBottom: "8px",
-                            }}
-                          >
-                            {order.order_items.map((item, idx) => (
-                              <div key={idx} style={{ fontSize: "13px" }}>
-                                <span
-                                  style={{
-                                    color: "var(--leaf-400)",
-                                    fontWeight: 700,
-                                  }}
-                                >
-                                  {item.quantity}x
-                                </span>{" "}
-                                <span style={{ color: "var(--text-primary)" }}>
-                                  {item.menus.name}
-                                </span>
-                              </div>
-                            ))}
-                          </div>
-                          <div
-                            style={{
-                              fontFamily: "var(--font-heading)",
-                              fontWeight: 700,
-                              fontSize: "14px",
-                            }}
-                          >
-                            <span className="text-gradient">
-                              Rp {order.total_price.toLocaleString("id-ID")}
-                            </span>
-                          </div>
-                        </td>
+                      const totalItemsUI = order.order_items.reduce(
+                        (sum, item) => {
+                          const menuName = (
+                            item.menus?.name || ""
+                          ).toLowerCase();
+                          const isBundling = menuName.includes("bundling");
+                          const realQty = isBundling
+                            ? item.quantity * 2
+                            : item.quantity;
+                          return sum + realQty;
+                        },
+                        0,
+                      );
 
-                        <td>
-                          <span
-                            className={`badge ${
-                              order.receive_method === "Delivery"
-                                ? "badge-blue"
-                                : "badge-orange"
-                            }`}
-                          >
-                            {order.receive_method === "Delivery" ? "🚚" : "📦"}{" "}
-                            {order.receive_method}
-                          </span>
-                          {order.receive_method === "Delivery" && (
-                            <div style={{ marginTop: "8px", fontSize: "12px" }}>
-                              <p
-                                style={{
-                                  color: "var(--text-muted)",
-                                  marginBottom: "4px",
-                                }}
-                              >
-                                {order.address_detail}
-                              </p>
-                              <a
-                                href={`https://www.google.com/maps?q=${order.latitude},${order.longitude}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                style={{
-                                  color: "var(--leaf-400)",
-                                  fontSize: "12px",
-                                }}
-                              >
-                                📍 Maps
-                              </a>
+                      return (
+                        <tr key={order.id}>
+                          <td>
+                            <div
+                              style={{
+                                fontWeight: 700,
+                                color: "var(--text-primary)",
+                                fontSize: "14px",
+                                marginBottom: "4px",
+                              }}
+                            >
+                              {order.customer_name}
                             </div>
-                          )}
-                        </td>
 
-                        <td>
-                          <span
-                            style={{
-                              fontWeight: 700,
-                              color: "var(--text-primary)",
-                              fontSize: "14px",
-                              display: "block",
-                              marginBottom: "4px",
-                            }}
-                          >
-                            {order.payment_method}
-                          </span>
-                          {order.payment_method === "QRIS" &&
-                            order.qris_proof_url && (
-                              <a
-                                href={order.qris_proof_url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                style={{
-                                  fontSize: "12px",
-                                  color: "#f1a0aa",
-                                }}
-                              >
-                                🖼 Lihat Bukti
-                              </a>
-                            )}
-                        </td>
+                            <a
+                              href={`https://wa.me/${waNumber}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{
+                                fontSize: "12px",
+                                color: "var(--leaf-400)",
+                                display: "block",
+                                marginBottom: "4px",
+                              }}
+                            >
+                              {order.phone}
+                            </a>
+                            <div
+                              style={{
+                                fontSize: "12px",
+                                color: "var(--text-muted)",
+                              }}
+                            >
+                              Notes: {order.notes || "—"}
+                            </div>
+                          </td>
 
-                        {/* Validation */}
-                        <td>
-                          {order.payment_method === "COD" ? (
-                            <span className="badge badge-green">✅ COD</span>
-                          ) : (
+                          <td>
                             <div
                               style={{
                                 display: "flex",
-                                gap: "8px",
-                                flexWrap: "wrap",
+                                flexDirection: "column",
+                                gap: "6px",
                               }}
                             >
-                              {order.order_status === "pending" && (
-                                <>
-                                  <button
-                                    onClick={() =>
-                                      updateOrderStatus(order.id, "accepted")
-                                    }
-                                    className="btn-3d"
-                                    style={{
-                                      padding: "6px 14px",
-                                      fontSize: "12px",
-                                      borderRadius: "10px",
-                                    }}
-                                  >
-                                    ✅ Terima
-                                  </button>
-                                  <button
-                                    onClick={() =>
-                                      updateOrderStatus(order.id, "rejected")
-                                    }
-                                    className="btn-3d btn-3d-danger"
-                                    style={{
-                                      padding: "6px 14px",
-                                      fontSize: "12px",
-                                      borderRadius: "10px",
-                                    }}
-                                  >
-                                    ❌ Tolak
-                                  </button>
-                                </>
-                              )}
-                              {order.order_status === "accepted" && (
-                                <span className="badge badge-green">
-                                  ✅ Diterima
+                              {order.order_items.map((item, idx) => (
+                                <span
+                                  key={idx}
+                                  style={{
+                                    color: "var(--text-primary)",
+                                    fontSize: "13px",
+                                  }}
+                                >
+                                  {item.menus?.name || "Menu"}
                                 </span>
-                              )}
-                              {order.order_status === "rejected" && (
-                                <span className="badge badge-red">
-                                  ❌ Ditolak
-                                </span>
-                              )}
+                              ))}
                             </div>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
+                          </td>
+
+                          <td>
+                            <div
+                              style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                gap: "6px",
+                              }}
+                            >
+                              {order.order_items.map((item, idx) => {
+                                const menuName = (
+                                  item.menus?.name || ""
+                                ).toLowerCase();
+                                const isBundling =
+                                  menuName.includes("bundling");
+                                const displayQty = isBundling
+                                  ? item.quantity * 2
+                                  : item.quantity;
+                                return (
+                                  <span
+                                    key={idx}
+                                    style={{
+                                      color: "var(--leaf-400)",
+                                      fontWeight: 700,
+                                      fontSize: "13px",
+                                    }}
+                                  >
+                                    {displayQty}
+                                  </span>
+                                );
+                              })}
+                            </div>
+                          </td>
+
+                          <td>
+                            <div
+                              style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                gap: "4px",
+                              }}
+                            >
+                              <span
+                                style={{
+                                  fontSize: "13px",
+                                  color: "var(--text-primary)",
+                                  fontWeight: 700,
+                                }}
+                              >
+                                {totalItemsUI} Porsi
+                              </span>
+                              <span
+                                className="text-gradient"
+                                style={{
+                                  fontFamily: "var(--font-heading)",
+                                  fontWeight: 700,
+                                  fontSize: "14px",
+                                  marginTop: "4px",
+                                }}
+                              >
+                                Rp {order.total_price.toLocaleString("id-ID")}
+                              </span>
+                            </div>
+                          </td>
+
+                          <td>
+                            <span
+                              className={`badge ${
+                                order.receive_method === "Delivery"
+                                  ? "badge-blue"
+                                  : "badge-orange"
+                              }`}
+                            >
+                              {order.receive_method === "Delivery"
+                                ? "🚚"
+                                : "📦"}{" "}
+                              {order.receive_method}
+                            </span>
+                            {order.receive_method === "Delivery" && (
+                              <div
+                                style={{ marginTop: "8px", fontSize: "12px" }}
+                              >
+                                <p
+                                  style={{
+                                    color: "var(--text-muted)",
+                                    marginBottom: "4px",
+                                  }}
+                                >
+                                  {order.address_detail}
+                                </p>
+                                <a
+                                  href={`https://www.google.com/maps?q=${order.latitude},${order.longitude}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  style={{
+                                    color: "var(--leaf-400)",
+                                    fontSize: "12px",
+                                  }}
+                                >
+                                  📍 Maps
+                                </a>
+                              </div>
+                            )}
+                          </td>
+
+                          <td>
+                            <span
+                              style={{
+                                fontWeight: 700,
+                                color: "var(--text-primary)",
+                                fontSize: "14px",
+                                display: "block",
+                                marginBottom: "4px",
+                              }}
+                            >
+                              {order.payment_method}
+                            </span>
+                            {order.payment_method === "QRIS" &&
+                              order.qris_proof_url && (
+                                <a
+                                  href={order.qris_proof_url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  style={{
+                                    fontSize: "12px",
+                                    color: "#f1a0aa",
+                                  }}
+                                >
+                                  🖼 Lihat Bukti
+                                </a>
+                              )}
+                          </td>
+
+                          <td>
+                            {order.payment_method === "COD" ? (
+                              <span className="badge badge-green">✅ COD</span>
+                            ) : (
+                              <div
+                                style={{
+                                  display: "flex",
+                                  gap: "8px",
+                                  flexWrap: "wrap",
+                                }}
+                              >
+                                {order.order_status === "pending" && (
+                                  <>
+                                    <button
+                                      onClick={() =>
+                                        updateOrderStatus(order.id, "accepted")
+                                      }
+                                      className="btn-3d"
+                                      style={{
+                                        padding: "6px 14px",
+                                        fontSize: "12px",
+                                        borderRadius: "10px",
+                                      }}
+                                    >
+                                      ✅ Terima
+                                    </button>
+                                    <button
+                                      onClick={() =>
+                                        updateOrderStatus(order.id, "rejected")
+                                      }
+                                      className="btn-3d btn-3d-danger"
+                                      style={{
+                                        padding: "6px 14px",
+                                        fontSize: "12px",
+                                        borderRadius: "10px",
+                                      }}
+                                    >
+                                      ❌ Tolak
+                                    </button>
+                                  </>
+                                )}
+                                {order.order_status === "accepted" && (
+                                  <span className="badge badge-green">
+                                    ✅ Diterima
+                                  </span>
+                                )}
+                                {order.order_status === "rejected" && (
+                                  <span className="badge badge-red">
+                                    ❌ Ditolak
+                                  </span>
+                                )}
+                              </div>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
@@ -796,7 +905,7 @@ export default function AdminDashboard() {
                       color: "white",
                     }}
                   >
-                    &laquo; Prev
+                    « Prev
                   </button>
                   <span className="text-sm font-semibold text-[var(--text-muted)]">
                     Halaman {currentPage} dari {totalPages}
@@ -812,7 +921,7 @@ export default function AdminDashboard() {
                       color: "white",
                     }}
                   >
-                    Next &raquo;
+                    Next »
                   </button>
                 </div>
               )}
