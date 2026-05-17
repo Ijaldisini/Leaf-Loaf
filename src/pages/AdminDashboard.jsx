@@ -186,7 +186,7 @@ export default function AdminDashboard() {
       "No HP",
       "Menu Pesanan",
       "Jumlah",
-      "Total",
+      "Total Porsi",
       "Total Harga (Rp)",
       "Metode Pengiriman",
       "Detail Alamat",
@@ -209,22 +209,18 @@ export default function AdminDashboard() {
           ? orderItems.map((item) => item.menus?.name || "Menu").join("\n")
           : "-";
 
-      const getRealQuantity = (item) => {
-        const menuName = (item.menus?.name || "").toLowerCase();
-        return menuName.includes("bundling")
-          ? item.quantity * 2
-          : item.quantity;
-      };
-
       const menuQuantities =
         orderItems.length > 0
-          ? orderItems.map((item) => getRealQuantity(item)).join("\n")
+          ? orderItems.map((item) => item.quantity).join("\n")
           : "-";
 
-      const totalItems = orderItems.reduce(
-        (sum, item) => sum + getRealQuantity(item),
-        0,
-      );
+      const totalPorsi = orderItems.reduce((sum, item) => {
+        const menuName = (item.menus?.name || "").toLowerCase();
+        const realQty = menuName.includes("bundling")
+          ? item.quantity * 2
+          : item.quantity;
+        return sum + realQty;
+      }, 0);
 
       let waLink = "-";
       if (order.phone) {
@@ -237,7 +233,7 @@ export default function AdminDashboard() {
         cleanStr(waLink),
         cleanStr(menuNames),
         cleanStr(menuQuantities),
-        totalItems,
+        totalPorsi,
         order.total_price,
         cleanStr(order.receive_method),
         cleanStr(order.address_detail),
@@ -710,14 +706,6 @@ export default function AdminDashboard() {
                               }}
                             >
                               {order.order_items.map((item, idx) => {
-                                const menuName = (
-                                  item.menus?.name || ""
-                                ).toLowerCase();
-                                const isBundling =
-                                  menuName.includes("bundling");
-                                const displayQty = isBundling
-                                  ? item.quantity * 2
-                                  : item.quantity;
                                 return (
                                   <span
                                     key={idx}
@@ -727,7 +715,7 @@ export default function AdminDashboard() {
                                       fontSize: "13px",
                                     }}
                                   >
-                                    {displayQty}
+                                    {item.quantity}
                                   </span>
                                 );
                               })}
